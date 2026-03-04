@@ -1,7 +1,6 @@
 package com.fank.f1k2.system.service;
 
 import com.fank.f1k2.business.entity.StaffInfo;
-import com.fank.f1k2.business.entity.SupplierInfo;
 import com.fank.f1k2.common.domain.QueryRequest;
 import com.fank.f1k2.system.domain.User;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -92,13 +91,6 @@ public interface UserService extends IService<User> {
      * @param staffInfo 员工信息
      */
     void registerStaff(StaffInfo staffInfo) throws Exception;
-
-    /**
-     * 注册供应商
-     *
-     * @param supplierInfo 供应商信息
-     */
-    void registerSupplier(SupplierInfo supplierInfo) throws Exception;
 
     /**
      * 重置密码

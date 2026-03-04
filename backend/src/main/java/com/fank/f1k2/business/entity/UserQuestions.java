@@ -1,0 +1,66 @@
+package com.fank.f1k2.business.entity;
+
+import java.time.LocalDateTime;
+import java.io.Serializable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+
+/**
+ * AI答疑
+ *
+ * @author FanK fan1ke2ke@gmail.com（悲伤的橘子树）
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+public class UserQuestions implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+    * 主键ID
+    */
+    @TableId(type = IdType.AUTO)
+    private Integer id;
+
+
+    /**
+     * 所属用户
+     */
+    private Integer userId;
+
+    /**
+     * 问题内容
+     */
+    private String content;
+
+    /**
+     * AI自动生成的回答
+     */
+    private String aiAnswer;
+
+    /**
+     * 管理者回复
+     */
+    private String adminReply;
+
+    /**
+     * 关联关键词
+     */
+    private String keyWord;
+
+    /**
+     * 状态
+     */
+    private String status;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdAt;
+
+
+}

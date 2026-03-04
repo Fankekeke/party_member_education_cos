@@ -90,6 +90,11 @@ public class StaffInfo implements Serializable {
     private String delFlag;
 
     /**
+     * 用户ID
+     */
+    private String userId;
+
+    /**
      * 部门名称
      */
     @TableField(exist = false)

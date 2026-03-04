@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fank.f1k2.business.dao.ChatRecordMapper">
+
+    <!-- 根据维修员ID获取沟通联系人列表 -->
+    <select id="getContactsByStaffId" resultType="java.util.LinkedHashMap">
+        SELECT DISTINCT cr.user_id          as         userId,
+                        cr.staff_id         AS         staffId,
+                        ui.name             as         userName,
+                        ui.images           as         userImages,
+                        MAX(cr.create_time) as         lastMessageTime,
+                        (SELECT content
+                         FROM chat_record cr2
+                         WHERE cr2.staff_id = cr.staff_id
+                           AND cr2.staff_id = #{staffId}
+                         ORDER BY cr2.create_time DESC LIMIT 1) as lastMessage
+        FROM chat_record cr
+            LEFT JOIN user_info ui
+        ON cr.user_id = ui.id
+        WHERE cr.staff_id = #{staffId}
+        GROUP BY cr.user_id
+        ORDER BY lastMessageTime DESC
+    </select>
+
+    <!-- 根据用户ID获取沟通联系人列表 -->
+    <select id="getContactsByUserId" resultType="java.util.LinkedHashMap">
+        SELECT DISTINCT cr.staff_id       as         staffId,
+                        cr.user_id          AS         userId,
+                        hi.name             as         staffName,
+                        hi.images           as         staffImages,
+                        MAX(cr.create_time) as         lastMessageTime,
+                        (SELECT content
+                         FROM chat_record cr2
+                         WHERE cr2.user_id = cr.user_id
+                           AND cr2.user_id = #{userId}
+                         ORDER BY cr2.create_time DESC LIMIT 1) as lastMessage
+        FROM chat_record cr
+            LEFT JOIN staff_info hi
+        ON cr.staff_id = hi.id
+        WHERE cr.user_id = #{userId}
+        GROUP BY cr.staff_id
+        ORDER BY lastMessageTime DESC
+    </select>
+</mapper>
