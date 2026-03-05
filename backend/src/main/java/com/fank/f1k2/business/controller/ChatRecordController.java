@@ -1,21 +1,20 @@
 package com.fank.f1k2.business.controller;
 
 
-import com.fank.f1k2.common.utils.R;
 import com.fank.f1k2.business.entity.ChatRecord;
-import com.fank.f1k2.business.entity.StaffInfo;
 import com.fank.f1k2.business.entity.UserInfo;
 import com.fank.f1k2.business.service.IChatRecordService;
-import com.fank.f1k2.business.service.IStaffInfoService;
 import com.fank.f1k2.business.service.IUserInfoService;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fank.f1k2.common.utils.R;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -28,14 +27,11 @@ public class ChatRecordController {
 
     private final IChatRecordService chatRecordService;
 
-    private final IStaffInfoService staffInfoService;
-
     private final IUserInfoService userInfoService;
 
     /**
      * 分页查询聊天记录
-     *
-     * @param page       分页对象
+     * @param page 分页对象
      * @param chatRecord 聊天记录
      * @return 结果
      */
@@ -43,53 +39,47 @@ public class ChatRecordController {
     public R page(Page<ChatRecord> page, ChatRecord chatRecord) {
         return R.ok(chatRecordService.page(page, Wrappers.<ChatRecord>lambdaQuery()
                 .eq(chatRecord.getUserId() != null, ChatRecord::getUserId, chatRecord.getUserId())
-                .eq(chatRecord.getStaffId() != null, ChatRecord::getStaffId, chatRecord.getStaffId())
+                .eq(chatRecord.getToUserId() != null, ChatRecord::getToUserId, chatRecord.getToUserId())
                 .orderByDesc(ChatRecord::getCreateTime)));
     }
 
     /**
-     * 根据维修员ID获取沟通联系人列表
-     *
-     * @param staffId 维修员ID
+     * 根据对应聊天方ID获取沟通联系人列表
+     * @param hotelId 对应聊天方ID
      * @return 联系人列表
      */
-    @GetMapping("/contacts/staff/{staffId}")
-    public R getContactsByStaffId(@PathVariable Integer staffId) {
-        StaffInfo staffInfo = staffInfoService.getOne(Wrappers.<StaffInfo>lambdaQuery().eq(StaffInfo::getUserId, staffId));
-        return R.ok(chatRecordService.getContactsByStaffId(staffInfo.getId()));
+    @GetMapping("/contacts/hotel/{hotelId}")
+    public R getContactsByHotelId(@PathVariable Integer hotelId) {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, hotelId));
+        return R.ok(chatRecordService.getContactsByHotelId(userInfo.getId()));
     }
 
     /**
      * 根据用户ID获取沟通联系人列表
-     *
      * @param userId 用户ID
      * @return 联系人列表
      */
     @GetMapping("/contacts/user/{userId}")
-    public R getContactsByUserId(@PathVariable Integer userId) {
+    public R
+    getContactsByUserId(@PathVariable Integer userId) {
         UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, userId));
         return R.ok(chatRecordService.getContactsByUserId(userInfo.getId()));
     }
 
     /**
-     * 根据用户ID和维修员ID获取聊天记录
-     *
-     * @param userId  用户ID
-     * @param staffId 维修员ID
+     * 根据用户ID和对应聊天方ID获取聊天记录
+     * @param userId 用户ID
+     * @param hotelId 对应聊天方ID
      * @return 结果
      */
     @GetMapping("/list")
-    public R getListByUserAndHotel(@RequestParam Integer userId, @RequestParam Integer staffId) {
-        List<ChatRecord> list = chatRecordService.list(Wrappers.<ChatRecord>lambdaQuery()
-                .eq(ChatRecord::getUserId, userId)
-                .eq(ChatRecord::getStaffId, staffId)
-                .orderByAsc(ChatRecord::getCreateTime));
+    public R getListByUserAndHotel(@RequestParam Integer userId, @RequestParam Integer hotelId) {
+        List<LinkedHashMap<String, Object>> list = chatRecordService.getListByUserAndHotel(userId, hotelId);
         return R.ok(list);
     }
 
     /**
      * 发送消息
-     *
      * @param chatRecord 聊天记录
      * @return 结果
      */
@@ -98,6 +88,7 @@ public class ChatRecordController {
         chatRecord.setCreateTime(DateUtil.formatDateTime(new Date()));
         return R.ok(chatRecordService.save(chatRecord));
     }
+
 
     /**
      * 发送消息
@@ -114,22 +105,7 @@ public class ChatRecordController {
     }
 
     /**
-     * 发送消息
-     *
-     * @param chatRecord 聊天记录
-     * @return 结果
-     */
-    @PostMapping("/defaultStaffChat")
-    public R defaultStaffChat(ChatRecord chatRecord) {
-        StaffInfo staffInfo = staffInfoService.getOne(Wrappers.<StaffInfo>lambdaQuery().eq(StaffInfo::getUserId, chatRecord.getStaffId()));
-        chatRecord.setStaffId(staffInfo.getId());
-        chatRecord.setCreateTime(DateUtil.formatDateTime(new Date()));
-        return R.ok(chatRecordService.save(chatRecord));
-    }
-
-    /**
      * 标记消息为已读
-     *
      * @param id 消息ID
      * @return 结果
      */

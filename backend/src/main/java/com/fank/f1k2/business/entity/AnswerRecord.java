@@ -2,6 +2,10 @@ package com.fank.f1k2.business.entity;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.List;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.fank.f1k2.business.entity.vo.CollectionItem;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -56,6 +60,9 @@ public class AnswerRecord implements Serializable {
      * 答题时间
      */
     private String createDate;
+
+    @TableField(exist = false)
+    private List<CollectionItem> collectionItemList;
 
 
 }

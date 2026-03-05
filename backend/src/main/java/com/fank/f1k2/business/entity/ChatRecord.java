@@ -1,13 +1,12 @@
 package com.fank.f1k2.business.entity;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * 聊天记录表
@@ -30,12 +29,12 @@ public class ChatRecord implements Serializable {
     private Integer userId;
 
     /**
-     * 维修员ID
+     * 对应聊天方ID
      */
-    private Integer staffId;
+    private Integer toUserId;
 
     /**
-     * 发送者类型 0-用户 1-维修
+     * 发送者类型 0-用户 1-对应聊天方
      */
     private String senderType;
 

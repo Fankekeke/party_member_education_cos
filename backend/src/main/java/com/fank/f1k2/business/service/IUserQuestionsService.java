@@ -21,4 +21,12 @@ public interface IUserQuestionsService extends IService<UserQuestions> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> queryPage(Page<UserQuestions> page, UserQuestions queryFrom);
+
+    /**
+     * 新增AI答疑
+     *
+     * @param userQuestions AI答疑对象
+     * @return 添加结果
+     */
+    boolean addUserQuestions(UserQuestions userQuestions);
 }

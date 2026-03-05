@@ -29,7 +29,7 @@ public class CollectionOptions implements Serializable {
     /**
      * 关联的题目ID
      */
-    private Integer questionId;
+    private String questionCode;
 
     /**
      * 选项内容

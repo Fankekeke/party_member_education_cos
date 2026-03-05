@@ -2,6 +2,9 @@ package com.fank.f1k2.business.controller;
 
 
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fank.f1k2.business.entity.UserInfo;
+import com.fank.f1k2.business.service.IUserInfoService;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fank.f1k2.business.entity.UserNotes;
@@ -26,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserNotesController {
 
     private final IUserNotesService bulletinInfoService;
+
+    private final IUserInfoService userInfoService;
 
     /**
      * 分页获取用户笔记
@@ -53,6 +58,18 @@ public class UserNotesController {
     /**
      * 查询用户笔记列表
      *
+     * @param userId 用户ID
+     * @return 笔记列表
+     */
+    @GetMapping("/queryNotesByUserId")
+    public R queryNotesByUserId(Integer userId) {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, userId));
+        return R.ok(bulletinInfoService.list(Wrappers.<UserNotes>lambdaQuery().eq(UserNotes::getUserId, userInfo.getId())));
+    }
+
+    /**
+     * 查询用户笔记列表
+     *
      * @return 结果
      */
     @GetMapping("/list")
@@ -68,6 +85,9 @@ public class UserNotesController {
      */
     @PostMapping
     public R save(UserNotes addFrom) {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, addFrom.getUserId()));
+        addFrom.setUserId(userInfo.getId());
+        addFrom.setCreatedAt(DateUtil.formatDateTime(new Date()));
         return R.ok(bulletinInfoService.save(addFrom));
     }
 
@@ -79,6 +99,7 @@ public class UserNotesController {
      */
     @PutMapping
     public R edit(UserNotes editFrom) {
+        editFrom.setCreatedAt(DateUtil.formatDateTime(new Date()));
         return R.ok(bulletinInfoService.updateById(editFrom));
     }
 

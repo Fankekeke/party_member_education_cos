@@ -27,4 +27,15 @@ public class PartyAnswersServiceImpl extends ServiceImpl<PartyAnswersMapper, Par
     public IPage<LinkedHashMap<String, Object>> queryPage(Page<PartyAnswers> page, PartyAnswers queryFrom) {
         return baseMapper.queryPage(page, queryFrom);
     }
+
+    /**
+     * 根据问题ID查询问题回答表
+     *
+     * @param questionId 问题ID
+     * @return 列表
+     */
+    @Override
+    public LinkedHashMap<String, Object> queryAnswersByQuestionId(Integer questionId) {
+        return baseMapper.queryAnswersByQuestionId(questionId);
+    }
 }

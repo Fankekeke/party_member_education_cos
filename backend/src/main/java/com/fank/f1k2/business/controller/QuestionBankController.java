@@ -2,6 +2,7 @@ package com.fank.f1k2.business.controller;
 
 
 import cn.hutool.core.date.DateUtil;
+import com.fank.f1k2.common.exception.F1k2Exception;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fank.f1k2.business.entity.QuestionBank;
@@ -67,9 +68,31 @@ public class QuestionBankController {
      * @return 结果
      */
     @PostMapping
-    public R save(QuestionBank addFrom) {
+    public R save(QuestionBank addFrom) throws F1k2Exception {
+        addFrom.setCode("OB-" + System.currentTimeMillis());
         addFrom.setCreateDate(DateUtil.formatDateTime(new Date()));
-        return R.ok(bulletinInfoService.save(addFrom));
+        return R.ok(bulletinInfoService.addQuestionBank(addFrom));
+    }
+
+    /**
+     * 查询题库信息列表（统计不同题目类型数量）
+     *
+     * @return 列表
+     */
+    @GetMapping("/queryBankList")
+    public R queryBankList() {
+        return R.ok(bulletinInfoService.queryQuestionBankList());
+    }
+
+    /**
+     * 查询题库信息详情
+     *
+     * @param bandId 主键ID
+     * @return 列表
+     */
+    @GetMapping("/queryBankDetail")
+    public R queryBankDetail(Integer bandId) {
+        return R.ok(bulletinInfoService.queryBankDetail(bandId));
     }
 
     /**
@@ -79,8 +102,8 @@ public class QuestionBankController {
      * @return 结果
      */
     @PutMapping
-    public R edit(QuestionBank editFrom) {
-        return R.ok(bulletinInfoService.updateById(editFrom));
+    public R edit(QuestionBank editFrom) throws F1k2Exception {
+        return R.ok(bulletinInfoService.editQuestionBank(editFrom));
     }
 
     /**

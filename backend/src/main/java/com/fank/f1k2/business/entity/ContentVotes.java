@@ -45,7 +45,7 @@ public class ContentVotes implements Serializable {
     /**
      * 投票时间
      */
-    private LocalDateTime createdAt;
+    private String createdAt;
 
 
 }

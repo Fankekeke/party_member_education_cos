@@ -1,7 +1,6 @@
 package com.fank.f1k2.business.controller;
 
 
-import com.fank.f1k2.common.exception.FebsException;
 import com.fank.f1k2.common.service.CacheService;
 import com.fank.f1k2.common.utils.R;
 import com.fank.f1k2.business.entity.*;
@@ -35,9 +34,9 @@ public class PostInfoController {
 
     private final ICollectInfoService collectInfoService;
 
-    private final IMessageInfoService messageInfoService;
-
     private final IFocusInfoService focusInfoService;
+
+    private final INotifyInfoService notifyInfoService;
 
     private final UserService userService;
 
@@ -180,12 +179,12 @@ public class PostInfoController {
             String username = user != null ? user.getName() : "用户";
             // 消息通知
             List<FocusInfo> focusInfoList = focusInfoService.list(Wrappers.<FocusInfo>lambdaQuery().eq(FocusInfo::getCollectUserId, postInfo.getUserId()).eq(FocusInfo::getDeleteFlag, 0));
-            List<MessageInfo> messageInfoList = new ArrayList<>();
+            List<NotifyInfo> messageInfoList = new ArrayList<>();
             String message = "您关注的" + username + "发布了新贴子 《" + postInfo.getTitle() + "》，快去回复吧";
             for (FocusInfo focusInfo : focusInfoList) {
-                messageInfoList.add(new MessageInfo(focusInfo.getUserId(), message, DateUtil.formatDateTime(new Date()), 0));
+                messageInfoList.add(new NotifyInfo(Math.toIntExact(focusInfo.getUserId()), message, DateUtil.formatDateTime(new Date())));
             }
-            messageInfoService.saveBatch(messageInfoList);
+            notifyInfoService.saveBatch(messageInfoList);
             postInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
             postInfo.setDeleteFlag(0);
             postInfo.setPageviews(0);

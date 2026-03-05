@@ -21,4 +21,12 @@ public interface IUserLearningTraceService extends IService<UserLearningTrace> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> queryPage(Page<UserLearningTrace> page, UserLearningTrace queryFrom);
+
+    /**
+     * 统计用户学习足迹与行为记录
+     *
+     * @param userId 用户ID
+     * @return 统计结果
+     */
+    LinkedHashMap<String, Object> statisticsUserLearningTrace(Integer userId);
 }

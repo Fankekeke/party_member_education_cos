@@ -40,6 +40,17 @@ public class UserLearningTraceController {
     }
 
     /**
+     * 统计用户学习足迹与行为记录
+     *
+     * @param userId 用户ID
+     * @return 统计结果
+     */
+    @GetMapping("/statistics")
+    public R statisticsUserLearningTrace(Integer userId) {
+        return R.ok(bulletinInfoService.statisticsUserLearningTrace(userId));
+    }
+
+    /**
      * 查询学习足迹与行为记录详情
      *
      * @param id 主键ID

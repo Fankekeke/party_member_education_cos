@@ -33,7 +33,7 @@ public class UserLearningTrace implements Serializable {
     private Integer userId;
 
     /**
-     * 行为状态
+     * 行为状态（'查询','提交','搜索'）
      */
     private String actionType;
 
@@ -50,7 +50,7 @@ public class UserLearningTrace implements Serializable {
     /**
      * 创建时间
      */
-    private LocalDateTime createdAt;
+    private String createdAt;
 
 
 }

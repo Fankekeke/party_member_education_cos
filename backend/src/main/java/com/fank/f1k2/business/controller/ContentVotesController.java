@@ -2,6 +2,9 @@ package com.fank.f1k2.business.controller;
 
 
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fank.f1k2.business.entity.UserInfo;
+import com.fank.f1k2.business.service.IUserInfoService;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fank.f1k2.business.entity.ContentVotes;
@@ -26,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContentVotesController {
 
     private final IContentVotesService bulletinInfoService;
+
+    private final IUserInfoService userInfoService;
 
     /**
      * 分页获取顶踩投票记录表
@@ -68,6 +73,9 @@ public class ContentVotesController {
      */
     @PostMapping
     public R save(ContentVotes addFrom) {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, addFrom.getUserId()));
+        addFrom.setUserId(userInfo.getId());
+        addFrom.setCreatedAt(DateUtil.formatDateTime(new Date()));
         return R.ok(bulletinInfoService.save(addFrom));
     }
 

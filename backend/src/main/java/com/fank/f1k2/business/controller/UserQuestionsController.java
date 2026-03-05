@@ -2,6 +2,7 @@ package com.fank.f1k2.business.controller;
 
 
 import cn.hutool.core.date.DateUtil;
+import com.fank.f1k2.business.service.IUserInfoService;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fank.f1k2.business.entity.UserQuestions;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserQuestionsController {
 
     private final IUserQuestionsService bulletinInfoService;
+
 
     /**
      * 分页获取AI答疑
@@ -68,7 +70,7 @@ public class UserQuestionsController {
      */
     @PostMapping
     public R save(UserQuestions addFrom) {
-        return R.ok(bulletinInfoService.save(addFrom));
+        return R.ok(bulletinInfoService.addUserQuestions(addFrom));
     }
 
     /**

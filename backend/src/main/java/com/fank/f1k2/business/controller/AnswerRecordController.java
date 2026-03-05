@@ -2,6 +2,7 @@ package com.fank.f1k2.business.controller;
 
 
 import cn.hutool.core.date.DateUtil;
+import com.fank.f1k2.common.exception.F1k2Exception;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fank.f1k2.business.entity.AnswerRecord;
@@ -67,9 +68,9 @@ public class AnswerRecordController {
      * @return 结果
      */
     @PostMapping
-    public R save(AnswerRecord addFrom) {
+    public R save(AnswerRecord addFrom) throws F1k2Exception {
         addFrom.setCreateDate(DateUtil.formatDateTime(new Date()));
-        return R.ok(bulletinInfoService.save(addFrom));
+        return R.ok(bulletinInfoService.addAnswerRecord(addFrom));
     }
 
     /**

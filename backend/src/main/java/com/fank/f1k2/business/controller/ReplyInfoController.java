@@ -34,7 +34,7 @@ public class ReplyInfoController {
 
     private final ICollectInfoService collectInfoService;
 
-    private final IMessageInfoService messageInfoService;
+    private final INotifyInfoService notifyInfoService;
 
     private final UserService userService;
 
@@ -86,18 +86,18 @@ public class ReplyInfoController {
             // 获取回复人信息
             UserInfo user = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, replyInfo.getUserId()));
             String username = user != null ? user.getName() : "用户";
-            List<MessageInfo> messageInfoList = new ArrayList<>();
+            List<NotifyInfo> messageInfoList = new ArrayList<>();
             List<CollectInfo> collectInfoList = collectInfoService.list(Wrappers.<CollectInfo>lambdaQuery().eq(CollectInfo::getPostId, replyInfo.getPostId()).eq(CollectInfo::getDeleteFlag, 0));
             String message = "您收藏的贴子《" + postInfo.getTitle() + "》，" + username + "进行了回复，快去看看吧";
             for (CollectInfo collectInfo : collectInfoList) {
-                messageInfoList.add(new MessageInfo(collectInfo.getUserId(), message, DateUtil.formatDateTime(new Date()), 0));
+                messageInfoList.add(new NotifyInfo(Math.toIntExact(collectInfo.getUserId()), message, DateUtil.formatDateTime(new Date())));
             }
 
             String message1 = "您的贴子《" + postInfo.getTitle() + "》，" + username + "进行了回复，快去看看吧";
-            MessageInfo messageInfo = new MessageInfo(postInfo.getUserId(), message1, DateUtil.formatDateTime(new Date()), 0);
+            NotifyInfo messageInfo = new NotifyInfo(Math.toIntExact(postInfo.getUserId()), message1, DateUtil.formatDateTime(new Date()));
 
             messageInfoList.add(messageInfo);
-            messageInfoService.saveBatch(messageInfoList);
+            notifyInfoService.saveBatch(messageInfoList);
             replyInfo.setDeleteFlag(0);
             replyInfo.setSendCreate(DateUtil.formatDateTime(new Date()));
             return R.ok(replyInfoService.save(replyInfo));

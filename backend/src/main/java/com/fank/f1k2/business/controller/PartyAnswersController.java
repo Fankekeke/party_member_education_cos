@@ -2,6 +2,9 @@ package com.fank.f1k2.business.controller;
 
 
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fank.f1k2.business.entity.UserInfo;
+import com.fank.f1k2.business.service.IUserInfoService;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fank.f1k2.business.entity.PartyAnswers;
@@ -27,6 +30,8 @@ public class PartyAnswersController {
 
     private final IPartyAnswersService bulletinInfoService;
 
+    private final IUserInfoService userInfoService;
+
     /**
      * 分页获取问题回答表
      *
@@ -37,6 +42,17 @@ public class PartyAnswersController {
     @GetMapping("/page")
     public R page(Page<PartyAnswers> page, PartyAnswers queryFrom) {
         return R.ok(bulletinInfoService.queryPage(page, queryFrom));
+    }
+
+    /**
+     * 根据问题ID查询问题回答表
+     *
+     * @param questionId 问题ID
+     * @return 列表
+     */
+    @GetMapping("/queryAnswersByQuestionId")
+    public R queryAnswersByQuestionId(Integer questionId) {
+        return R.ok(bulletinInfoService.queryAnswersByQuestionId(questionId));
     }
 
     /**
@@ -68,6 +84,9 @@ public class PartyAnswersController {
      */
     @PostMapping
     public R save(PartyAnswers addFrom) {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, addFrom.getUserId()));
+        addFrom.setUserId(userInfo.getId());
+        addFrom.setCreatedAt(DateUtil.formatDateTime(new Date()));
         return R.ok(bulletinInfoService.save(addFrom));
     }
 

@@ -1,7 +1,7 @@
 package com.fank.f1k2.business.service.impl;
 
-import com.fank.f1k2.business.entity.ChatRecord;
 import com.fank.f1k2.business.dao.ChatRecordMapper;
+import com.fank.f1k2.business.entity.ChatRecord;
 import com.fank.f1k2.business.service.IChatRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -16,14 +16,14 @@ import java.util.List;
 public class ChatRecordServiceImpl extends ServiceImpl<ChatRecordMapper, ChatRecord> implements IChatRecordService {
 
     /**
-     * 根据维修员ID获取沟通联系人列表
+     * 根据对应聊天方ID获取沟通联系人列表
      *
-     * @param staffId 维修员ID
+     * @param hotelId 对应聊天方ID
      * @return 联系人列表
      */
     @Override
-    public List<LinkedHashMap<String, Object>> getContactsByStaffId(Integer staffId) {
-        return baseMapper.getContactsByStaffId(staffId);
+    public List<LinkedHashMap<String, Object>> getContactsByHotelId(Integer hotelId) {
+        return baseMapper.getContactsByHotelId(hotelId);
     }
 
     /**
@@ -35,5 +35,17 @@ public class ChatRecordServiceImpl extends ServiceImpl<ChatRecordMapper, ChatRec
     @Override
     public List<LinkedHashMap<String, Object>> getContactsByUserId(Integer userId) {
         return baseMapper.getContactsByUserId(userId);
+    }
+
+    /**
+     * 根据用户ID和对应聊天方ID获取聊天记录
+     *
+     * @param userId  用户ID
+     * @param hotelId 对应聊天方ID
+     * @return 结果
+     */
+    @Override
+    public List<LinkedHashMap<String, Object>> getListByUserAndHotel(Integer userId, Integer hotelId) {
+        return baseMapper.getListByUserAndHotel(userId, hotelId);
     }
 }

@@ -5,4 +5,8 @@
     <select id="queryPage" resultType="java.util.LinkedHashMap">
 
     </select>
+
+    <select id="queryAnswersByQuestionId" resultType="java.util.LinkedHashMap">
+
+    </select>
 </mapper>

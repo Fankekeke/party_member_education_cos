@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author FanK fan1ke2ke@gmail.com（悲伤的橘子树）
@@ -21,4 +22,12 @@ public interface UserLearningTraceMapper extends BaseMapper<UserLearningTrace> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> queryPage(Page<UserLearningTrace> page, @Param("queryFrom") UserLearningTrace queryFrom);
+
+    /**
+     * 获取用户学习足迹与行为记录
+     *
+     * @param userId 用户ID
+     * @return 列表
+     */
+    List<LinkedHashMap<String, Object>> queryUserLearningTraceHistory(@Param("userId") Integer userId);
 }

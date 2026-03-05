@@ -53,14 +53,14 @@ public class UserQuestions implements Serializable {
     private String keyWord;
 
     /**
-     * 状态
+     * 状态（'进行中','已回答','已采纳'）
      */
     private String status;
 
     /**
      * 创建时间
      */
-    private LocalDateTime createdAt;
+    private String createdAt;
 
 
 }

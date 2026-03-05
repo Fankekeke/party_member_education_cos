@@ -40,7 +40,7 @@ public class UserFavorites implements Serializable {
     /**
      * 创建时间
      */
-    private LocalDateTime createdAt;
+    private String createdAt;
 
 
 }

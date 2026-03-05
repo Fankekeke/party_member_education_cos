@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fank.f1k2.business.entity.AnswerRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.fank.f1k2.common.exception.F1k2Exception;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.LinkedHashMap;
@@ -21,4 +22,12 @@ public interface IAnswerRecordService extends IService<AnswerRecord> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> queryPage(Page<AnswerRecord> page, AnswerRecord queryFrom);
+
+    /**
+     * 新增答题记录
+     *
+     * @param answerRecord 答题记录对象
+     * @return 添加结果
+     */
+    boolean addAnswerRecord(AnswerRecord answerRecord) throws F1k2Exception;
 }

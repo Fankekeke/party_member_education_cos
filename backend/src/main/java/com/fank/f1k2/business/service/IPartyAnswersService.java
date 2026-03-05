@@ -21,4 +21,12 @@ public interface IPartyAnswersService extends IService<PartyAnswers> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> queryPage(Page<PartyAnswers> page, @Param("queryFrom") PartyAnswers queryFrom);
+
+    /**
+     * 根据问题ID查询问题回答表
+     *
+     * @param questionId 问题ID
+     * @return 列表
+     */
+    LinkedHashMap<String, Object> queryAnswersByQuestionId(Integer questionId);
 }

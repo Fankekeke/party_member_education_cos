@@ -45,7 +45,7 @@ public class PartyAnswers implements Serializable {
     /**
      * 回答时间
      */
-    private LocalDateTime createdAt;
+    private String createdAt;
 
 
 }

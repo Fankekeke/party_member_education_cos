@@ -1,7 +1,7 @@
 package com.fank.f1k2.business.dao;
 
-import com.fank.f1k2.business.entity.ChatRecord;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.fank.f1k2.business.entity.ChatRecord;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.LinkedHashMap;
@@ -13,12 +13,12 @@ import java.util.List;
 public interface ChatRecordMapper extends BaseMapper<ChatRecord> {
 
     /**
-     * 根据维修员ID获取沟通联系人列表
+     * 根据对应聊天方ID获取沟通联系人列表
      *
-     * @param staffId 维修员ID
+     * @param hotelId 对应聊天方ID
      * @return 联系人列表
      */
-    List<LinkedHashMap<String, Object>> getContactsByStaffId(@Param("staffId") Integer staffId);
+    List<LinkedHashMap<String, Object>> getContactsByHotelId(@Param("hotelId") Integer hotelId);
 
     /**
      * 根据用户ID获取沟通联系人列表
@@ -27,4 +27,13 @@ public interface ChatRecordMapper extends BaseMapper<ChatRecord> {
      * @return 联系人列表
      */
     List<LinkedHashMap<String, Object>> getContactsByUserId(@Param("userId") Integer userId);
+
+    /**
+     * 根据用户ID和对应聊天方ID获取聊天记录
+     *
+     * @param userId  用户ID
+     * @param hotelId 对应聊天方ID
+     * @return 结果
+     */
+    List<LinkedHashMap<String, Object>> getListByUserAndHotel(@Param("userId") Integer userId, @Param("hotelId") Integer hotelId);
 }

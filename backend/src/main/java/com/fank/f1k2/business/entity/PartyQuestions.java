@@ -43,9 +43,14 @@ public class PartyQuestions implements Serializable {
     private String content;
 
     /**
+     * 问题状态（进行中 已关闭 已采纳）
+     */
+    private String status;
+
+    /**
      * 提问时间
      */
-    private LocalDateTime createdAt;
+    private String createdAt;
 
 
 }

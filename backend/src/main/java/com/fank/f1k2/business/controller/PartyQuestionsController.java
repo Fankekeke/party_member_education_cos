@@ -2,6 +2,9 @@ package com.fank.f1k2.business.controller;
 
 
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fank.f1k2.business.entity.UserInfo;
+import com.fank.f1k2.business.service.IUserInfoService;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fank.f1k2.business.entity.PartyQuestions;
@@ -26,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class PartyQuestionsController {
 
     private final IPartyQuestionsService bulletinInfoService;
+
+    private final IUserInfoService userInfoService;
 
     /**
      * 分页获取党员社区问题表
@@ -68,6 +73,10 @@ public class PartyQuestionsController {
      */
     @PostMapping
     public R save(PartyQuestions addFrom) {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, addFrom.getUserId()));
+        addFrom.setUserId(userInfo.getId());
+        addFrom.setCreatedAt(DateUtil.formatDateTime(new Date()));
+        addFrom.setStatus("进行中");
         return R.ok(bulletinInfoService.save(addFrom));
     }
 

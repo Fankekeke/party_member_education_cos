@@ -2,6 +2,9 @@ package com.fank.f1k2.business.entity;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.List;
+
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -26,6 +29,10 @@ public class CollectionInfo implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    /**
+     * 题目编号
+     */
+    private String code;
 
     /**
      * 关联的题库ID
@@ -50,17 +57,25 @@ public class CollectionInfo implements Serializable {
     /**
      * 创建时间
      */
-    private LocalDateTime creationTime;
+    private String creationTime;
 
     /**
      * 最后编辑时间
      */
-    private LocalDateTime editTime;
+    private String editTime;
 
     /**
      * 所属题库
      */
     private String tags;
 
+    /**
+     * 题目选项集合
+     */
+    @TableField(exist = false)
+    private String collectionItem;
 
+
+    @TableField(exist = false)
+    private List<CollectionOptions> collectionOptionsList;
 }
