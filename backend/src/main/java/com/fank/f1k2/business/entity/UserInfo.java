@@ -44,6 +44,11 @@ public class UserInfo implements Serializable {
     private String mail;
 
     /**
+     * 生日
+     */
+    private String birthday;
+
+    /**
      * 联系电话
      */
     private String phone;

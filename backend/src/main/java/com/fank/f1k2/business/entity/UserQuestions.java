@@ -62,5 +62,14 @@ public class UserQuestions implements Serializable {
      */
     private String createdAt;
 
-
+    /**
+     * 获取标题或内容摘要
+     * @return 标题或内容前 50 字
+     */
+    public String getTitleOrContent() {
+        if (this.content != null && this.content.length() > 0) {
+            return this.content.length() > 50 ? this.content.substring(0, 50) + "..." : this.content;
+        }
+        return "";
+    }
 }
