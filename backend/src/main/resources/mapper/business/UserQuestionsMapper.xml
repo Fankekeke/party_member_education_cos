@@ -3,6 +3,31 @@
 <mapper namespace="com.fank.f1k2.business.dao.UserQuestionsMapper">
 
     <select id="queryPage" resultType="java.util.LinkedHashMap">
+        select
+        uq.id,
+        uq.user_id,
+        uq.content,
+        uq.ai_answer,
+        uq.admin_reply,
+        uq.key_word,
+        uq.status,
+        uq.created_at,
 
+        ui.`name` as userName,
+        ui.images as userImages
+
+        from user_questions uq
+        left join user_info ui on (ui.id = uq.user_id)
+        where 1 = 1
+        <if test="queryFrom.userName != null and queryFrom.userName != ''">
+            AND ui.`name` LIKE CONCAT('%',#{queryFrom.userName},'%')
+        </if>
+        <if test="queryFrom.content != null and queryFrom.content != ''">
+            AND uq.content LIKE CONCAT('%',#{queryFrom.content},'%')
+        </if>
+        <if test="queryFrom.status != null and queryFrom.status != ''">
+            AND uq.status = #{queryFrom.status}
+        </if>
+        order uq.created_at desc
     </select>
 </mapper>

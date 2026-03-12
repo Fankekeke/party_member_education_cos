@@ -3,6 +3,26 @@
 <mapper namespace="com.fank.f1k2.business.dao.PartyQuestionsMapper">
 
     <select id="queryPage" resultType="java.util.LinkedHashMap">
-
+        SELECT
+        pq.id,
+        pq.user_id,
+        pq.title,
+        pq.content,
+        pq.created_at,
+        ui.`name` AS userName,
+        ui.images AS userImages
+        FROM
+        party_questions pq
+        LEFT JOIN user_info ui ON (ui.id = pq.user_id)
+        WHERE
+        1 = 1
+        <if test="queryFrom.userName != null and queryFrom.userName != ''">
+            AND ui.`name` LIKE CONCAT('%',#{queryFrom.userName},'%')
+        </if>
+        <if test="queryFrom.title != null and queryFrom.title != ''">
+            AND pq.title LIKE CONCAT('%',#{queryFrom.title},'%')
+        </if>
+        ORDER BY
+        pq.created_at DESC
     </select>
 </mapper>

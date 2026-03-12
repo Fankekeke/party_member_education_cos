@@ -3,10 +3,51 @@
 <mapper namespace="com.fank.f1k2.business.dao.PartyAnswersMapper">
 
     <select id="queryPage" resultType="java.util.LinkedHashMap">
-
+        SELECT
+        pa.id,
+        pa.question_id,
+        pa.user_id,
+        pa.content,
+        pa.created_at,
+        ui.`name` AS userName,
+        ui.images AS userImages,
+        pq.title,
+        pq.content AS questionContent
+        FROM
+        party_answers pa
+        LEFT JOIN party_questions pq ON (pq.id = pa.question_id)
+        LEFT JOIN user_info ui ON (ui.id = pa.user_id)
+        WHERE
+        1 = 1
+        <if test="queryFrom.userName != null and queryFrom.userName != ''">
+            AND ui.`name` LIKE CONCAT('%',#{queryFrom.userName},'%')
+        </if>
+        <if test="queryFrom.title != null and queryFrom.title != ''">
+            AND pq.title LIKE CONCAT('%',#{queryFrom.title},'%')
+        </if>
+        ORDER BY
+        pa.created_at DESC
     </select>
 
     <select id="queryAnswersByQuestionId" resultType="java.util.LinkedHashMap">
-
+        SELECT
+        pa.id,
+        pa.question_id,
+        pa.user_id,
+        pa.content,
+        pa.created_at,
+        ui.`name` AS userName,
+        ui.images AS userImages,
+        pq.title,
+        pq.content AS questionContent
+        FROM
+        party_answers pa
+        LEFT JOIN party_questions pq ON (pq.id = pa.question_id)
+        LEFT JOIN user_info ui ON (ui.id = pa.user_id)
+        WHERE
+        1 = 1
+        pa.questionId = #{questionId}
+        ORDER BY
+        pa.created_at DESC
     </select>
 </mapper>

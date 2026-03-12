@@ -3,6 +3,26 @@
 <mapper namespace="com.fank.f1k2.business.dao.UserNotesMapper">
 
     <select id="queryPage" resultType="java.util.LinkedHashMap">
-
+        SELECT
+        un.id,
+        un.user_id,
+        un.sort_type,
+        un.content,
+        un.created_at,
+        ui.`name` AS userName,
+        ui.images AS userImages
+        FROM
+        user_notes un
+        LEFT JOIN user_info ui ON (ui.id = un.user_id)
+        WHERE
+        1 = 1
+        <if test="queryFrom.userName != null and queryFrom.userName != ''">
+            AND ui.`name` LIKE CONCAT('%',#{queryFrom.userName},'%')
+        </if>
+        <if test="queryFrom.sortType != null and queryFrom.sortType != ''">
+            AND un.`sort_type` = #{queryFrom.sortType}
+        </if>
+        ORDER BY
+        un.created_at DESC
     </select>
 </mapper>

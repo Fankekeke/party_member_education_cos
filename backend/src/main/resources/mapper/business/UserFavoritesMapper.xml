@@ -3,6 +3,38 @@
 <mapper namespace="com.fank.f1k2.business.dao.UserFavoritesMapper">
 
     <select id="queryPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        uf.id,
+        uf.user_id,
+        uf.topic_id,
+        uf.created_at,
 
+        ui.`name` AS userName,
+        ui.images AS userImages,
+
+        ci.question_type,
+        ci.score,
+        ci.DESC,
+        ci.tags
+        FROM
+        user_favorites uf
+        LEFT JOIN user_info ui ON (ui.id = uf.user_id)
+        LEFT JOIN collection_info ci ON (ci.id = uf.topic_id)
+        WHERE
+        1 = 1
+        <if test="queryFrom.userName != null and queryFrom.userName != ''">
+            AND ui.`name` LIKE CONCAT('%',#{queryFrom.userName},'%')
+        </if>
+        <if test="queryFrom.desc != null and queryFrom.desc != ''">
+            AND ci.DESC LIKE CONCAT('%',#{queryFrom.desc},'%')
+        </if>
+        <if test="queryFrom.tags != null and queryFrom.tags != ''">
+            AND ci.tags LIKE CONCAT('%',#{queryFrom.tags},'%')
+        </if>
+        <if test="queryFrom.questionType != null and queryFrom.questionType != ''">
+            AND ci.question_type LIKE CONCAT('%',#{queryFrom.questionType},'%')
+        </if>
+        ORDER BY
+        uf.created_at DESC
     </select>
 </mapper>

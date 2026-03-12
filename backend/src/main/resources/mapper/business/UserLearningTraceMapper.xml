@@ -3,6 +3,27 @@
 <mapper namespace="com.fank.f1k2.business.dao.UserLearningTraceMapper">
 
     <select id="queryPage" resultType="java.util.LinkedHashMap">
-
+        SELECT
+        ult.id,
+        ult.user_id,
+        ult.action_type,
+        ult.target_id,
+        ult.key_word,
+        ult.created_at,
+        ui.`name` AS userName,
+        ui.images AS userImages
+        FROM
+        user_learning_trace ult
+        LEFT JOIN user_info ui ON (ui.id = ult.ui.user_id)
+        WHERE
+        1 = 1
+        <if test="queryFrom.userName != null and queryFrom.userName != ''">
+            AND ui.`name` LIKE CONCAT('%',#{queryFrom.userName},'%')
+        </if>
+        <if test="queryFrom.actionType != null and queryFrom.actionType != ''">
+            AND ult.action_type LIKE CONCAT('%',#{queryFrom.actionType},'%')
+        </if>
+        ORDER BY
+        ult.created_at DESC
     </select>
 </mapper>

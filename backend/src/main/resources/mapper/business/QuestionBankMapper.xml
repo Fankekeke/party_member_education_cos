@@ -3,6 +3,23 @@
 <mapper namespace="com.fank.f1k2.business.dao.QuestionBankMapper">
 
     <select id="queryPage" resultType="java.util.LinkedHashMap">
-
+        SELECT
+        id,
+        CODE,
+        NAME,
+        image,
+        create_date
+        FROM
+        question_bank
+        WHERE
+        1 = 1
+        <if test="replyInfo.code != null and replyInfo.code != ''">
+            AND code LIKE CONCAT('%',#{replyInfo.code},'%')
+        </if>
+        <if test="replyInfo.name != null and replyInfo.name != ''">
+            AND name LIKE CONCAT('%',#{replyInfo.name},'%')
+        </if>
+        ORDER BY
+        created_at DESC
     </select>
 </mapper>
