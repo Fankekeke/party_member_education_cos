@@ -137,8 +137,7 @@ public class WordCloudServiceImpl implements IWordCloudService {
      */
     private List<WordCloudVO.WordCloudItem> buildWordCloud(Map<String, KeywordStats> keywordStatsMap) {
         List<Map.Entry<String, KeywordStats>> sortedList = keywordStatsMap.entrySet().stream()
-                .sorted(Map.Entry.<String, KeywordStats>comparingByValue(
-                        Comparator.comparingInt(k -> k.frequency).reversed()))
+                .sorted((a, b) -> Integer.compare(b.getValue().frequency, a.getValue().frequency))
                 .limit(50)
                 .collect(Collectors.toList());
 
@@ -199,8 +198,7 @@ public class WordCloudServiceImpl implements IWordCloudService {
             List<UserQuestions> questions) {
 
         List<Map.Entry<String, KeywordStats>> sortedList = keywordStatsMap.entrySet().stream()
-                .sorted(Map.Entry.<String, KeywordStats>comparingByValue(
-                        Comparator.comparingInt(k -> k.frequency).reversed()))
+                .sorted((a, b) -> Integer.compare(b.getValue().frequency, a.getValue().frequency))
                 .limit(10)
                 .collect(Collectors.toList());
 
@@ -270,8 +268,7 @@ public class WordCloudServiceImpl implements IWordCloudService {
 
         return keywordStatsMap.entrySet().stream()
                 .filter(entry -> categorizeKeyword(entry.getKey()).equals(category))
-                .sorted(Map.Entry.<String, KeywordStats>comparingByValue(
-                        Comparator.comparingInt(k -> k.frequency).reversed()))
+                .sorted((a, b) -> Integer.compare(b.getValue().frequency, a.getValue().frequency))
                 .limit(5)
                 .map(entry -> {
                     WordCloudVO.CategoryItem item = new WordCloudVO.CategoryItem();

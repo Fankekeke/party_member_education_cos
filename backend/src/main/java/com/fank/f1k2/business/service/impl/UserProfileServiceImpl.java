@@ -177,7 +177,8 @@ public class UserProfileServiceImpl implements IUserProfileService {
                 .collect(Collectors.groupingBy(StaffInfo::getDeptId));
 
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
-        String monthStart = DateUtil.formatDateTime(firstDayOfMonth.atStartOfDay());
+        Date monthStart1 = java.util.Date.from(firstDayOfMonth.atStartOfDay().atZone(java.time.ZoneId.systemDefault()).toInstant());
+        String monthStart = DateUtil.formatDateTime(monthStart1);
         String monthEnd = DateUtil.formatDateTime(new Date());
 
         int rank = 1;

@@ -51,6 +51,8 @@ public class User implements Serializable {
     private String username;
 
     private String password;
+    private String name;
+    private String images;
 
     private Long deptId;
 

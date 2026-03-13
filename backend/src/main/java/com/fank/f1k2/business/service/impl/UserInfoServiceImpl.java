@@ -1,10 +1,7 @@
 package com.fank.f1k2.business.service.impl;
 
-import com.fank.f1k2.business.dao.OrderInfoMapper;
-import com.fank.f1k2.business.entity.OrderInfo;
 import com.fank.f1k2.business.entity.UserInfo;
 import com.fank.f1k2.business.dao.UserInfoMapper;
-import com.fank.f1k2.business.service.IOrderInfoService;
 import com.fank.f1k2.business.service.IUserInfoService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -24,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> implements IUserInfoService {
 
-    private final OrderInfoMapper orderInfoMapper;
 
     /**
      * 分页获取用户信息
@@ -56,9 +52,6 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         UserInfo user = this.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, userId));
         result.put("user", user);
 
-        // 订单
-        List<OrderInfo> orderList = orderInfoMapper.selectList(Wrappers.<OrderInfo>lambdaQuery().eq(OrderInfo::getUserId, user.getId()));
-        result.put("order", orderList);
         return result;
     }
 }
