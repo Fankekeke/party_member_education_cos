@@ -77,7 +77,6 @@ public class UserInfo implements Serializable {
      * 所属账户
      */
     private Long userId;
-    private Integer userstaffid;
 
     /**
      * 创建时间
@@ -93,6 +92,8 @@ public class UserInfo implements Serializable {
      * 积分余额
      */
     private BigDecimal integral;
+
     private String type;
+
     private Integer userStaffId;
 }

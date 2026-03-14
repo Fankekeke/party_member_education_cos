@@ -124,7 +124,7 @@ export default {
             case '1':
               return <a-tag color="#48ad20">用户</a-tag>
             case '2':
-              return <a-tag color="#2eabff">装修人员</a-tag>
+              return <a-tag color="#2eabff">党员</a-tag>
             default:
               return '- -'
           }
@@ -144,12 +144,12 @@ export default {
         title: '头像',
         dataIndex: 'userImages',
         customRender: (text, record, index) => {
-          if (!record.userImages) return <a-avatar shape="square" icon="user" />
+          if (!record.avatar) return <a-avatar shape="square" icon="user" />
           return <a-popover>
             <template slot="content">
-              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages } />
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.avatar } />
             </template>
-            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages } />
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.avatar } />
           </a-popover>
         }
       }, {

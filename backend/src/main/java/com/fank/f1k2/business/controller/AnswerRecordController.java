@@ -2,6 +2,9 @@ package com.fank.f1k2.business.controller;
 
 
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fank.f1k2.business.entity.UserInfo;
+import com.fank.f1k2.business.service.IUserInfoService;
 import com.fank.f1k2.common.exception.F1k2Exception;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -27,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AnswerRecordController {
 
     private final IAnswerRecordService bulletinInfoService;
+
+    private final IUserInfoService userInfoService;
 
     /**
      * 分页获取答题记录
@@ -69,6 +74,8 @@ public class AnswerRecordController {
      */
     @PostMapping
     public R save(AnswerRecord addFrom) throws F1k2Exception {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, addFrom.getUserId()));
+        addFrom.setUserId(userInfo.getId());
         addFrom.setCreateDate(DateUtil.formatDateTime(new Date()));
         return R.ok(bulletinInfoService.addAnswerRecord(addFrom));
     }

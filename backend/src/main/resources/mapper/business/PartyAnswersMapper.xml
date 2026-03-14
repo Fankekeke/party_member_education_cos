@@ -12,7 +12,9 @@
         ui.`name` AS userName,
         ui.images AS userImages,
         pq.title,
-        pq.content AS questionContent
+        pq.content AS questionContent,
+        (SELECT COALESCE(SUM(CASE WHEN cv.vote_type = 1 THEN 1 ELSE 0 END), 0) FROM content_votes cv WHERE cv.answer_id = pa.id) AS up_count,
+        (SELECT COALESCE(SUM(CASE WHEN cv.vote_type = 0 THEN 1 ELSE 0 END), 0) FROM content_votes cv WHERE cv.answer_id = pa.id) AS down_count
         FROM
         party_answers pa
         LEFT JOIN party_questions pq ON (pq.id = pa.question_id)
@@ -42,14 +44,16 @@
         ui.`name` AS userName,
         ui.images AS userImages,
         pq.title,
-        pq.content AS questionContent
+        pq.content AS questionContent,
+        (SELECT COALESCE(SUM(CASE WHEN cv.vote_type = 1 THEN 1 ELSE 0 END), 0) FROM content_votes cv WHERE cv.answer_id = pa.id) AS up_count,
+        (SELECT COALESCE(SUM(CASE WHEN cv.vote_type = 0 THEN 1 ELSE 0 END), 0) FROM content_votes cv WHERE cv.answer_id = pa.id) AS down_count
         FROM
         party_answers pa
         LEFT JOIN party_questions pq ON (pq.id = pa.question_id)
         LEFT JOIN user_info ui ON (ui.id = pa.user_id)
         WHERE
         1 = 1
-        pa.questionId = #{questionId}
+        AND pa.question_id = #{questionId}
         ORDER BY
         pa.created_at DESC
     </select>

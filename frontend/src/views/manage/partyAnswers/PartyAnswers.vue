@@ -7,7 +7,7 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="标题"
+                label="问题内容"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.title"/>
@@ -15,10 +15,10 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="内容"
+                label="用户名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.content"/>
+                <a-input v-model="queryParams.userName"/>
               </a-form-item>
             </a-col>
           </div>
@@ -31,7 +31,7 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
+<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
         <a-button @click="batchDelete">删除</a-button>
 <!--        <a-button @click="batchDelete1">删除</a-button>-->
       </div>
@@ -45,30 +45,46 @@
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                :scroll="{ x: 900 }"
                @change="handleTableChange">
-        <template slot="titleShow" slot-scope="text, record">
-          <template>
-            <a-badge status="processing" v-if="record.rackUp === 1"/>
-            <a-badge status="error" v-if="record.rackUp === 0"/>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.title }}
-              </template>
-              {{ record.title.slice(0, 8) }} ...
-            </a-tooltip>
-          </template>
+
+        <template slot="content" slot-scope="text">
+          <a-tooltip v-if="text">
+            <template slot="title">{{ text }}</template>
+            <span class="table-text-ellipsis">{{ text }}</span>
+          </a-tooltip>
+          <span v-else>- -</span>
         </template>
-        <template slot="contentShow" slot-scope="text, record">
-          <template>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.content }}
-              </template>
-              {{ record.content.slice(0, 30) }} ...
-            </a-tooltip>
-          </template>
+
+        <template slot="userName" slot-scope="text">
+          <span v-if="text">{{ text }}</span>
+          <span v-else style="color: #999;">- -</span>
         </template>
+
+        <template slot="userImages" slot-scope="text, record">
+          <a-popover v-if="record.userImages">
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + record.userImages" />
+            </template>
+            <a-avatar shape="square" icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + record.userImages" />
+          </a-popover>
+          <a-avatar v-else shape="square" icon="user" />
+        </template>
+        <template slot="upCount" slot-scope="text">
+          <a-badge v-if="text !== null && text !== undefined" :count="text" :numberStyle="{ backgroundColor: '#1cb40c' }" />
+          <span v-else style="color: #999;">0</span>
+        </template>
+
+        <template slot="downCount" slot-scope="text">
+          <a-badge v-if="text !== null && text !== undefined" :count="text" :numberStyle="{ backgroundColor: '#f5222d' }" />
+          <span v-else style="color: #999;">0</span>
+        </template>
+
+        <template slot="createdAt" slot-scope="text">
+          <span v-if="text">{{ text }}</span>
+          <span v-else style="color: #999;">- -</span>
+        </template>
+
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
+          <a-icon type="eye" theme="twoTone" twoToneColor="#1890ff" @click="showDetail(record)" title="查看详情" style="margin-right: 10px;"></a-icon>
         </template>
       </a-table>
     </div>
@@ -84,6 +100,67 @@
       @success="handleBulletinEditSuccess"
       :bulletinEditVisiable="bulletinEdit.visiable">
     </bulletin-edit>
+    <!-- 详情 Modal -->
+    <a-modal
+      v-model="detailModal.visible"
+      :title="detailModal.title"
+      :width="1000"
+      :footer="null"
+      @cancel="handleDetailClose"
+      centered
+      :bodyStyle="{ padding: '24px' }">
+      <div class="detail-container">
+        <div class="answer-header">
+          <div class="answer-meta">
+            <div class="meta-item">
+              <a-avatar v-if="detailModal.data.userImages" shape="circle" size="50" icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + detailModal.data.userImages" />
+              <a-avatar v-else shape="circle" size="50" icon="user" style="background-color: #1890ff;" />
+              <div class="user-info">
+                <div class="user-name">{{ detailModal.data.userName || '匿名用户' }}</div>
+                <div class="create-time">
+                  <a-icon type="clock-circle" style="margin-right: 4px;" />
+                  <span>{{ detailModal.data.createdAt || '- -' }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="answer-stats">
+              <div class="stat-item up">
+                <a-icon type="like" theme="filled" />
+                <span>{{ detailModal.data.upCount || 0 }}</span>
+              </div>
+              <div class="stat-item down">
+                <a-icon type="dislike" theme="filled" />
+                <span>{{ detailModal.data.downCount || 0 }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a-divider style="margin: 16px 0" />
+
+        <div class="question-section">
+          <div class="section-title">
+            <a-icon type="question-circle" style="color: #1890ff; margin-right: 8px;" />
+            <span>关联问题</span>
+          </div>
+          <div class="section-body question-detail">
+            <p class="text-content">{{ detailModal.data.questionContent || '暂无问题内容' }}</p>
+          </div>
+        </div>
+
+        <a-divider style="margin: 24px 0" />
+
+        <div class="answer-section">
+          <div class="section-title">
+            <a-icon type="message" style="color: #52c41a; margin-right: 8px;" />
+            <span>回答内容</span>
+          </div>
+          <div class="section-body answer-detail">
+            <p class="text-content">{{ detailModal.data.content || '暂无回答内容' }}</p>
+          </div>
+        </div>
+      </div>
+    </a-modal>
   </a-card>
 </template>
 
@@ -122,7 +199,12 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
-      userList: []
+      userList: [],
+      detailModal: {
+        visible: false,
+        title: '回答详情',
+        data: {}
+      }
     }
   },
   computed: {
@@ -133,50 +215,51 @@ export default {
       return [{
         title: '标题',
         dataIndex: 'title',
-        ellipsis: true
+        ellipsis: true,
+        scopedSlots: { customRender: 'title' },
+        width: 250
       }, {
-        title: '问答记录内容',
+        title: '回答内容',
         dataIndex: 'content',
-        ellipsis: true
+        ellipsis: true,
+        scopedSlots: { customRender: 'content' },
+        width: 400
       }, {
-        title: '发布时间',
-        dataIndex: 'createDate',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        },
-        ellipsis: true
+        title: '用户名称',
+        ellipsis: true,
+        dataIndex: 'userName',
+        scopedSlots: { customRender: 'userName' },
+        width: 120
       }, {
-        title: '消息类型',
-        dataIndex: 'type',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 1:
-              return <a-tag>通知</a-tag>
-            case 2:
-              return <a-tag>问答记录</a-tag>
-            default:
-              return '- -'
-          }
-        }
+        title: '头像',
+        dataIndex: 'userImages',
+        ellipsis: true,
+        scopedSlots: { customRender: 'userImages' },
+        width: 100
       }, {
-        title: '上传人',
-        dataIndex: 'publisher',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        },
-        ellipsis: true
+        title: '点赞数',
+        dataIndex: 'upCount',
+        ellipsis: true,
+        scopedSlots: { customRender: 'upCount' },
+        width: 80
+      }, {
+        title: '踩数',
+        dataIndex: 'downCount',
+        ellipsis: true,
+        scopedSlots: { customRender: 'downCount' },
+        width: 80
+      }, {
+        title: '创建时间',
+        dataIndex: 'createdAt',
+        ellipsis: true,
+        scopedSlots: { customRender: 'createdAt' },
+        width: 180
       }, {
         title: '操作',
         dataIndex: 'operation',
-        scopedSlots: {customRender: 'operation'}
+        scopedSlots: { customRender: 'operation' },
+        width: 120,
+        fixed: 'right'
       }]
     }
   },
@@ -184,6 +267,14 @@ export default {
     this.fetch()
   },
   methods: {
+    showDetail (record) {
+      this.detailModal.data = { ...record }
+      this.detailModal.visible = true
+    },
+    handleDetailClose () {
+      this.detailModal.visible = false
+      this.detailModal.data = {}
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -320,4 +411,137 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "../../../../static/less/Common";
+.table-text-ellipsis {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-container {
+  .answer-header {
+    .answer-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+      border-radius: 8px;
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+
+        .user-info {
+          margin-left: 12px;
+
+          .user-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #262626;
+            margin-bottom: 4px;
+          }
+
+          .create-time {
+            font-size: 13px;
+            color: #8c8c8c;
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+
+      .answer-stats {
+        display: flex;
+        gap: 16px;
+
+        .stat-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border-radius: 4px;
+          font-size: 14px;
+          font-weight: 500;
+
+          &.up {
+            background: #fff1f0;
+            color: #f5222d;
+
+            .anticon {
+              color: #f5222d;
+            }
+          }
+
+          &.down {
+            background: #f5f5f5;
+            color: #8c8c8c;
+
+            .anticon {
+              color: #8c8c8c;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .question-section,
+  .answer-section {
+    .section-title {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: #262626;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      border-left: 4px solid #1890ff;
+    }
+
+    .section-body {
+      padding: 16px;
+      background: #fafafa;
+      border-radius: 6px;
+      border: 1px solid #e8e8e8;
+      min-height: 80px;
+
+      &.question-detail {
+        background: #f6ffed;
+        border-color: #b7eb8f;
+        border-left: 4px solid #52c41a;
+
+        .text-content {
+          margin: 0;
+          line-height: 1.8;
+          color: #262626;
+          font-size: 14px;
+          white-space: pre-wrap;
+          word-break: break-all;
+          max-height: 300px;
+          overflow-y: auto;
+        }
+      }
+
+      &.answer-detail {
+        background: #e6f7ff;
+        border-color: #91d5ff;
+        border-left: 4px solid #1890ff;
+
+        .text-content {
+          margin: 0;
+          line-height: 1.8;
+          color: #262626;
+          font-size: 14px;
+          white-space: pre-wrap;
+          word-break: break-all;
+          max-height: 400px;
+          overflow-y: auto;
+        }
+      }
+    }
+  }
+}
 </style>

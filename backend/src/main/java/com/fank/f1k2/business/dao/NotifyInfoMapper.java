@@ -24,10 +24,28 @@ public interface NotifyInfoMapper extends BaseMapper<NotifyInfo> {
     IPage<LinkedHashMap<String, Object>> queryNotifyPage(Page<NotifyInfo> page, @Param("notifyInfo") NotifyInfo notifyInfo);
 
     /**
+     * 获取用户消息通知信息列表
+     *
+     * @param page       分页对象
+     * @param notifyInfo 搜索条件
+     * @return 列表
+     */
+    IPage<LinkedHashMap<String, Object>> queryNotifyByUser(Page<NotifyInfo> page, @Param("notifyInfo") NotifyInfo notifyInfo);
+
+    /**
+     * 获取党员消息通知信息列表
+     *
+     * @param page       分页对象
+     * @param notifyInfo 搜索条件
+     * @return 列表
+     */
+    IPage<LinkedHashMap<String, Object>> queryNotifyByStaff(Page<NotifyInfo> page, @Param("notifyInfo") NotifyInfo notifyInfo);
+
+    /**
      * 根据用户ID获取消息通知信息
      *
      * @param userId 用户ID
      * @return 结果
      */
-    List<LinkedHashMap<String, Object>> queryNotifyByUser(@Param("userId") Integer userId);
+    List<LinkedHashMap<String, Object>> queryNotifyByUserId(@Param("userId") Integer userId);
 }

@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 /**
- * 员工管理
+ * 党员管理
  *
  * @author FanK fan1ke2ke@gmail.com（悲伤的橘子树）
  */
@@ -30,12 +30,12 @@ public class StaffInfo implements Serializable {
 
 
     /**
-     * 员工编号
+     * 党员编号
      */
     private String code;
 
     /**
-     * 员工姓名
+     * 党员姓名
      */
     private String name;
 
@@ -45,7 +45,7 @@ public class StaffInfo implements Serializable {
     private Integer staffSex;
 
     /**
-     * 员工头像
+     * 党员头像
      */
     private String images;
 

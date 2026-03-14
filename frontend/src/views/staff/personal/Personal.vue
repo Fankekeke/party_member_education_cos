@@ -9,7 +9,7 @@
           <a-form :form="form" layout="vertical">
             <a-row :gutter="10">
               <a-col :span="12">
-                <a-form-item label='员工名称'>
+                <a-form-item label='党员名称'>
                   <a-input disabled v-decorator="[
             'name',
             { rules: [{ required: true, message: '请输入名称!' }] }
@@ -58,7 +58,7 @@
                 </a-form-item>
               </a-col>
               <a-col :span="24">
-                <a-form-item label='员工图片' v-bind="formItemLayout">
+                <a-form-item label='党员图片' v-bind="formItemLayout">
                   <a-upload
                     name="avatar"
                     action="http://127.0.0.1:9527/file/fileUpload/"

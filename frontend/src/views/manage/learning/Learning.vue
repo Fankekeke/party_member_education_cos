@@ -7,18 +7,22 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="标题"
+                label="用户名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.title"/>
+                <a-input v-model="queryParams.userName"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="内容"
+                label="行为类型"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.content"/>
+                <a-select v-model="queryParams.status" placeholder="请选择行为类型" allow-clear>
+                  <a-select-option value="搜索">搜索</a-select-option>
+                  <a-select-option value="提交">提交</a-select-option>
+                  <a-select-option value="查询">查询</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </div>
@@ -31,7 +35,7 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
+<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
         <a-button @click="batchDelete">删除</a-button>
 <!--        <a-button @click="batchDelete1">删除</a-button>-->
       </div>
@@ -45,28 +49,41 @@
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                :scroll="{ x: 900 }"
                @change="handleTableChange">
-        <template slot="titleShow" slot-scope="text, record">
-          <template>
-            <a-badge status="processing" v-if="record.rackUp === 1"/>
-            <a-badge status="error" v-if="record.rackUp === 0"/>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.title }}
-              </template>
-              {{ record.title.slice(0, 8) }} ...
-            </a-tooltip>
-          </template>
+        <template slot="keyWord" slot-scope="text">
+          <a-tooltip v-if="text">
+            <template slot="title">{{ text }}</template>
+            <span class="table-text-ellipsis">{{ text }}</span>
+          </a-tooltip>
+          <span v-else>- -</span>
         </template>
-        <template slot="contentShow" slot-scope="text, record">
-          <template>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.content }}
-              </template>
-              {{ record.content.slice(0, 30) }} ...
-            </a-tooltip>
-          </template>
+
+        <template slot="actionType" slot-scope="text">
+          <a-tag v-if="text === '搜索'" color="blue">{{ text }}</a-tag>
+          <a-tag v-else-if="text === '提交'" color="green">{{ text }}</a-tag>
+          <a-tag v-else-if="text === '查询'" color="orange">{{ text }}</a-tag>
+          <span v-else>{{ text || '- -' }}</span>
         </template>
+
+        <template slot="userName" slot-scope="text">
+          <span v-if="text">{{ text }}</span>
+          <span v-else style="color: #999;">- -</span>
+        </template>
+
+        <template slot="userImages" slot-scope="text, record">
+          <a-popover v-if="record.userImages">
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + record.userImages" />
+            </template>
+            <a-avatar shape="square" icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + record.userImages" />
+          </a-popover>
+          <a-avatar v-else shape="square" icon="user" />
+        </template>
+
+        <template slot="createdAt" slot-scope="text">
+          <span v-if="text">{{ text }}</span>
+          <span v-else style="color: #999;">- -</span>
+        </template>
+
         <template slot="operation" slot-scope="text, record">
           <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
         </template>
@@ -131,52 +148,35 @@ export default {
     }),
     columns () {
       return [{
-        title: '标题',
-        dataIndex: 'title',
-        ellipsis: true
+        title: '关键词',
+        dataIndex: 'keyWord',
+        ellipsis: true,
+        scopedSlots: { customRender: 'keyWord' },
+        width: 400
       }, {
-        title: '学习路径内容',
-        dataIndex: 'content',
-        ellipsis: true
+        title: '行为类型',
+        dataIndex: 'actionType',
+        ellipsis: true,
+        scopedSlots: { customRender: 'actionType' },
+        width: 120
       }, {
-        title: '发布时间',
-        dataIndex: 'createDate',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        },
-        ellipsis: true
+        title: '用户名称',
+        ellipsis: true,
+        dataIndex: 'userName',
+        scopedSlots: { customRender: 'userName' },
+        width: 150
       }, {
-        title: '消息类型',
-        dataIndex: 'type',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 1:
-              return <a-tag>通知</a-tag>
-            case 2:
-              return <a-tag>学习路径</a-tag>
-            default:
-              return '- -'
-          }
-        }
+        title: '头像',
+        dataIndex: 'userImages',
+        ellipsis: true,
+        scopedSlots: { customRender: 'userImages' },
+        width: 100
       }, {
-        title: '上传人',
-        dataIndex: 'publisher',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        },
-        ellipsis: true
-      }, {
-        title: '操作',
-        dataIndex: 'operation',
-        scopedSlots: {customRender: 'operation'}
+        title: '操作时间',
+        dataIndex: 'createdAt',
+        ellipsis: true,
+        scopedSlots: { customRender: 'createdAt' },
+        width: 180
       }]
     }
   },
@@ -301,6 +301,9 @@ export default {
         // 如果分页信息为空，则设置为默认值
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
+      }
+      if (params.status === undefined) {
+        delete params.status
       }
       this.$get('/business/user-learning-trace/page', {
         ...params

@@ -14,18 +14,18 @@ import java.util.List;
 public interface IStaffInfoService extends IService<StaffInfo> {
 
     /**
-     * 分页获取员工管理
+     * 分页获取党员管理
      *
      * @param page      分页对象
-     * @param queryFrom 员工管理
+     * @param queryFrom 党员管理
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> queryPage(Page<StaffInfo> page, StaffInfo queryFrom);
 
     /**
-     * 查询员工列表
+     * 查询党员列表
      *
-     * @param queryFrom 员工管理
+     * @param queryFrom 党员管理
      * @return 列表
      */
     List<LinkedHashMap<String, Object>> queryStaffList(StaffInfo queryFrom);

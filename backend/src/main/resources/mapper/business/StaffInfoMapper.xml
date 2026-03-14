@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fank.f1k2.business.dao.StaffInfoMapper">
 
-    <!-- 分页获取员工管理 -->
+    <!-- 分页获取党员管理 -->
     <select id="queryPage" resultType="java.util.LinkedHashMap">
         SELECT
         si.id,
@@ -38,7 +38,7 @@
         si.create_date DESC
     </select>
 
-    <!-- 查询员工列表 -->
+    <!-- 查询党员列表 -->
     <select id="queryStaffList" resultType="java.util.LinkedHashMap">
         SELECT
         si.id,

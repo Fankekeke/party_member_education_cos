@@ -28,6 +28,22 @@ public class NotifyInfoServiceImpl extends ServiceImpl<NotifyInfoMapper, NotifyI
     public IPage<LinkedHashMap<String, Object>> queryNotifyPage(Page<NotifyInfo> page, NotifyInfo notifyInfo) {
         return baseMapper.queryNotifyPage(page, notifyInfo);
     }
+    /**
+     * 获取用户消息通知信息列表
+     *
+     * @param page       分页对象
+     * @param notifyInfo 搜索条件
+     * @return 列表
+     */
+    @Override
+    public IPage<LinkedHashMap<String, Object>> queryNotifyByUser(Page<NotifyInfo> page, NotifyInfo notifyInfo) {
+        return baseMapper.queryNotifyByUser(page, notifyInfo);
+    }
+
+    @Override
+    public IPage<LinkedHashMap<String, Object>> queryNotifyByStaff(Page<NotifyInfo> page, NotifyInfo notifyInfo) {
+        return baseMapper.queryNotifyByStaff(page, notifyInfo);
+    }
 
     /**
      * 根据用户ID获取消息通知信息
@@ -37,6 +53,6 @@ public class NotifyInfoServiceImpl extends ServiceImpl<NotifyInfoMapper, NotifyI
      */
     @Override
     public List<LinkedHashMap<String, Object>> queryNotifyByUser(Integer userId) {
-        return baseMapper.queryNotifyByUser(userId);
+        return baseMapper.queryNotifyByUserId(userId);
     }
 }

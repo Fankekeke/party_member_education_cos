@@ -2,6 +2,8 @@ package com.fank.f1k2.business.controller;
 
 
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fank.f1k2.business.entity.UserInfo;
 import com.fank.f1k2.business.service.IUserInfoService;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -28,6 +30,7 @@ public class UserQuestionsController {
 
     private final IUserQuestionsService bulletinInfoService;
 
+    private final IUserInfoService userInfoService;
 
     /**
      * 分页获取AI答疑
@@ -70,6 +73,8 @@ public class UserQuestionsController {
      */
     @PostMapping
     public R save(UserQuestions addFrom) {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, addFrom.getUserId()));
+        addFrom.setUserId(userInfo.getId());
         return R.ok(bulletinInfoService.addUserQuestions(addFrom));
     }
 

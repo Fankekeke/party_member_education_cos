@@ -34,6 +34,30 @@ public class NotifyInfoController {
     }
 
     /**
+     * 获取用户消息通知信息列表
+     *
+     * @param page       分页对象
+     * @param notifyInfo 搜索条件
+     * @return 列表
+     */
+    @GetMapping("/queryNotifyByUser")
+    public R queryNotifyByUser(Page<NotifyInfo> page, NotifyInfo notifyInfo) {
+        return R.ok(notifyInfoService.queryNotifyByUser(page, notifyInfo));
+    }
+
+    /**
+     * 获取党员消息通知信息列表
+     *
+     * @param page       分页对象
+     * @param notifyInfo 搜索条件
+     * @return 列表
+     */
+    @GetMapping("/queryNotifyByStaff")
+    public R queryNotifyByStaff(Page<NotifyInfo> page, NotifyInfo notifyInfo) {
+        return R.ok(notifyInfoService.queryNotifyByStaff(page, notifyInfo));
+    }
+
+    /**
      * 获取ID获取审核详情
      *
      * @param id 主键

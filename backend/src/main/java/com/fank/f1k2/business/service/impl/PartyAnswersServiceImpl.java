@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author FanK fan1ke2ke@gmail.com（悲伤的橘子树）
@@ -35,7 +36,7 @@ public class PartyAnswersServiceImpl extends ServiceImpl<PartyAnswersMapper, Par
      * @return 列表
      */
     @Override
-    public LinkedHashMap<String, Object> queryAnswersByQuestionId(Integer questionId) {
+    public List<LinkedHashMap<String, Object>> queryAnswersByQuestionId(Integer questionId) {
         return baseMapper.queryAnswersByQuestionId(questionId);
     }
 }

@@ -86,9 +86,9 @@ public interface UserService extends IService<User> {
     void regist(String username, String password) throws Exception;
 
     /**
-     * 注册员工
+     * 注册党员
      *
-     * @param staffInfo 员工信息
+     * @param staffInfo 党员信息
      */
     void registerStaff(StaffInfo staffInfo) throws Exception;
 

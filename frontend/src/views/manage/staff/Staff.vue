@@ -7,7 +7,7 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="员工名称"
+                label="党员名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.name"/>
@@ -15,7 +15,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="员工编号"
+                label="党员编号"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.code"/>
@@ -128,11 +128,11 @@ export default {
     }),
     columns () {
       return [{
-        title: '员工编号',
+        title: '党员编号',
         dataIndex: 'code',
         ellipsis: true
       }, {
-        title: '员工名称',
+        title: '党员名称',
         dataIndex: 'name',
         ellipsis: true,
         customRender: (text, row, index) => {
@@ -220,7 +220,7 @@ export default {
     },
     handleModuleAddSuccess () {
       this.moduleAdd.visiable = false
-      this.$message.success('新增员工成功')
+      this.$message.success('新增党员成功')
       this.search()
     },
     edit (record) {
@@ -232,7 +232,7 @@ export default {
     },
     handleModuleEditSuccess () {
       this.moduleEdit.visiable = false
-      this.$message.success('修改员工成功')
+      this.$message.success('修改党员成功')
       this.search()
     },
     batchDelete () {

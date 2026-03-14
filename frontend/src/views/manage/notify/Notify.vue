@@ -44,22 +44,56 @@
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                :scroll="{ x: 900 }"
                @change="handleTableChange">
-        <template slot="avatarShow" slot-scope="text, record">
-          <template>
-            <img alt="头像" :src="'static/avatar/' + text">
-          </template>
+        <template slot="userCode" slot-scope="text">
+          <a-tooltip v-if="text">
+            <template slot="title">{{ text }}</template>
+            <span class="table-text-ellipsis">{{ text }}</span>
+          </a-tooltip>
+          <span v-else>- -</span>
         </template>
-        <template slot="contentShow" slot-scope="text, record">
-          <template>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.content }}
-              </template>
-              {{ record.content.slice(0, 30) }} ...
-            </a-tooltip>
-          </template>
+
+        <template slot="name" slot-scope="text">
+          <span v-if="text">{{ text }}</span>
+          <span v-else style="color: #999;">- -</span>
         </template>
-        <template slot="operation" slot-scope="text, record">
+
+        <template slot="userName" slot-scope="text">
+          <span v-if="text">{{ text }}</span>
+          <span v-else style="color: #999;">- -</span>
+        </template>
+
+        <template slot="userPhone" slot-scope="text">
+          <span v-if="text">{{ text }}</span>
+          <span v-else style="color: #999;">- -</span>
+        </template>
+
+        <template slot="userImages" slot-scope="text, record">
+          <a-popover v-if="record.userImages">
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + record.userImages" />
+            </template>
+            <a-avatar shape="square" icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + record.userImages" />
+          </a-popover>
+          <a-avatar v-else shape="square" icon="user" />
+        </template>
+
+        <template slot="delFlag" slot-scope="text">
+          <a-tag v-if="text === 0">未读</a-tag>
+          <a-tag v-else-if="text === 1" color="blue">已读</a-tag>
+          <span v-else style="color: #999;">- -</span>
+        </template>
+
+        <template slot="content" slot-scope="text">
+          <a-tooltip v-if="text">
+            <template slot="title">{{ text }}</template>
+            <span class="table-text-ellipsis">{{ text }}</span>
+          </a-tooltip>
+          <span v-else>- -</span>
+        </template>
+
+        <template slot="createDate" slot-scope="text">
+          <span v-if="text">{{ text }}</span>
+          <span v-else style="color: #999;">- -</span>
         </template>
       </a-table>
     </div>
@@ -112,30 +146,46 @@ export default {
     columns () {
       return [{
         title: '用户编号',
-        dataIndex: 'userCode'
+        dataIndex: 'userCode',
+        ellipsis: true,
+        scopedSlots: { customRender: 'userCode' },
+        width: 180
       }, {
-        title: '用户名称',
-        dataIndex: 'name'
+        title: '用户名',
+        dataIndex: 'userName',
+        ellipsis: true,
+        scopedSlots: { customRender: 'userName' },
+        width: 120
+      }, {
+        title: '联系方式',
+        dataIndex: 'userPhone',
+        ellipsis: true,
+        scopedSlots: { customRender: 'userPhone' },
+        width: 150
+      }, {
+        title: '头像',
+        dataIndex: 'userImages',
+        ellipsis: true,
+        scopedSlots: { customRender: 'userImages' },
+        width: 100
       }, {
         title: '消息状态',
         dataIndex: 'delFlag',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 0:
-              return <a-tag>未读</a-tag>
-            case 1:
-              return <a-tag color="blue">已读</a-tag>
-            default:
-              return '- -'
-          }
-        }
+        ellipsis: true,
+        scopedSlots: { customRender: 'delFlag' },
+        width: 100
       }, {
         title: '消息内容',
         dataIndex: 'content',
-        width: 750
+        ellipsis: true,
+        scopedSlots: { customRender: 'content' },
+        width: 500
       }, {
         title: '发送时间',
-        dataIndex: 'createDate'
+        dataIndex: 'createDate',
+        ellipsis: true,
+        scopedSlots: { customRender: 'createDate' },
+        width: 180
       }]
     }
   },

@@ -31,7 +31,7 @@
                 <head-info title="供应商数量" :content="titleData.pharmacyNum" :center="false" :bordered="false"/>
               </a-col>
               <a-col :span="4">
-                <head-info title="员工数量" :content="titleData.staffNum" :center="false"/>
+                <head-info title="党员数量" :content="titleData.staffNum" :center="false"/>
               </a-col>
             </a-row>
           </div>

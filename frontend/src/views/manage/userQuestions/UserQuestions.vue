@@ -7,18 +7,29 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="标题"
+                label="问题内容"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.title"/>
+                <a-input v-model="queryParams.content"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="内容"
+                label="用户名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.content"/>
+                <a-input v-model="queryParams.userName"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item
+                label="状态"
+                :labelCol="{span: 5}"
+                :wrapperCol="{span: 18, offset: 1}">
+                <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear>
+                  <a-select-option value="已回答">已回答</a-select-option>
+                  <a-select-option value="进行中">进行中</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </div>
@@ -31,7 +42,7 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
+<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
         <a-button @click="batchDelete">删除</a-button>
 <!--        <a-button @click="batchDelete1">删除</a-button>-->
       </div>
@@ -45,33 +56,88 @@
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                :scroll="{ x: 900 }"
                @change="handleTableChange">
-        <template slot="titleShow" slot-scope="text, record">
-          <template>
-            <a-badge status="processing" v-if="record.rackUp === 1"/>
-            <a-badge status="error" v-if="record.rackUp === 0"/>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.title }}
-              </template>
-              {{ record.title.slice(0, 8) }} ...
-            </a-tooltip>
-          </template>
-        </template>
-        <template slot="contentShow" slot-scope="text, record">
-          <template>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.content }}
-              </template>
-              {{ record.content.slice(0, 30) }} ...
-            </a-tooltip>
-          </template>
-        </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
+          <a-icon type="eye" theme="twoTone" twoToneColor="#1890ff" @click="showDetail(record)" title="查看详情" style="margin-right: 10px;"></a-icon>
+<!--          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>-->
         </template>
       </a-table>
     </div>
+    <!-- 详情 Modal -->
+    <a-modal
+      v-model="detailModal.visible"
+      :title="detailModal.title"
+      :width="900"
+      :footer="null"
+      @cancel="handleDetailClose"
+      centered
+      :bodyStyle="{ padding: '24px' }">
+      <div class="detail-container">
+        <div class="detail-header">
+          <div class="header-avatar">
+            <a-avatar v-if="detailModal.data.userImages" shape="circle" size="80" icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + detailModal.data.userImages" />
+            <a-avatar v-else shape="circle" size="80" icon="user" style="background-color: #1890ff;" />
+          </div>
+          <div class="header-info">
+            <div class="user-name">{{ detailModal.data.userName || '匿名用户' }}</div>
+            <div class="question-status">
+              <a-tag v-if="detailModal.data.status === '已回答'" color="success" style="font-size: 14px;">
+                <a-icon type="check-circle" /> 已回答
+              </a-tag>
+              <a-tag v-else-if="detailModal.data.status === '进行中'" color="processing" style="font-size: 14px;">
+                <a-icon type="loading" /> 进行中
+              </a-tag>
+              <span v-else style="color: #999;">- -</span>
+            </div>
+          </div>
+        </div>
+
+        <a-divider style="margin: 16px 0" />
+
+        <div class="detail-content">
+          <div class="content-section">
+            <div class="section-title">
+              <a-icon type="question-circle" style="color: #1890ff; margin-right: 8px;" />
+              <span>问题内容</span>
+            </div>
+            <div class="section-body">
+              <p class="text-content">{{ detailModal.data.content || '暂无内容' }}</p>
+            </div>
+          </div>
+
+          <div class="content-section">
+            <div class="section-title">
+              <a-icon type="robot" style="color: #52c41a; margin-right: 8px;" />
+              <span>AI 答疑</span>
+            </div>
+            <div class="section-body ai-answer">
+              <p class="text-content">{{ detailModal.data.aiAnswer || detailModal.data.content || '暂无 AI 回答' }}</p>
+            </div>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">
+                <a-icon type="tags" style="color: #722ed1;" />
+                <span>关键词</span>
+              </div>
+              <div class="info-value">
+                <a-tag color="blue">{{ detailModal.data.keyWord || '- -' }}</a-tag>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-label">
+                <a-icon type="clock-circle" style="color: #faad14;" />
+                <span>创建时间</span>
+              </div>
+              <div class="info-value">
+                <span>{{ detailModal.data.createdAt || '- -' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a-modal>
     <bulletin-add
       v-if="bulletinAdd.visiable"
       @close="handleBulletinAddClose"
@@ -122,7 +188,12 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
-      userList: []
+      userList: [],
+      detailModal: {
+        visible: false,
+        title: '问题详情',
+        data: {}
+      }
     }
   },
   computed: {
@@ -131,40 +202,56 @@ export default {
     }),
     columns () {
       return [{
-        title: '标题',
-        dataIndex: 'title',
+        title: '关键词',
+        dataIndex: 'keyWord',
         ellipsis: true
       }, {
-        title: 'AI答疑内容',
+        title: '问题内容',
         dataIndex: 'content',
         ellipsis: true
       }, {
-        title: '发布时间',
-        dataIndex: 'createDate',
+        title: 'AI答疑内容',
+        dataIndex: 'aiAnswer',
+        ellipsis: true
+      }, {
+        title: '用户名称',
+        ellipsis: true,
+        dataIndex: 'userName',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
           } else {
             return '- -'
           }
-        },
-        ellipsis: true
+        }
       }, {
-        title: '消息类型',
-        dataIndex: 'type',
+        title: '头像',
+        dataIndex: 'userImages',
+        customRender: (text, record, index) => {
+          if (!record.userImages) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages } />
+          </a-popover>
+        }
+      }, {
+        title: '状态',
+        dataIndex: 'status',
         customRender: (text, row, index) => {
           switch (text) {
-            case 1:
-              return <a-tag>通知</a-tag>
-            case 2:
-              return <a-tag>AI答疑</a-tag>
+            case '已回答':
+              return <a-tag type="success">已回答</a-tag>
+            case '进行中':
+              return <a-tag type="warning">进行中</a-tag>
             default:
               return '- -'
           }
         }
       }, {
-        title: '上传人',
-        dataIndex: 'publisher',
+        title: '创建时间',
+        dataIndex: 'createdAt',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
@@ -184,6 +271,14 @@ export default {
     this.fetch()
   },
   methods: {
+    showDetail (record) {
+      this.detailModal.data = { ...record }
+      this.detailModal.visible = true
+    },
+    handleDetailClose () {
+      this.detailModal.visible = false
+      this.detailModal.data = {}
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -302,6 +397,9 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
+      if (params.status === undefined) {
+        delete params.status
+      }
       this.$get('/business/user-questions/page', {
         ...params
       }).then((r) => {
@@ -320,4 +418,115 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "../../../../static/less/Common";
+.detail-container {
+  .detail-header {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    border-radius: 8px;
+    margin-bottom: 16px;
+
+    .header-avatar {
+      margin-right: 24px;
+
+      .ant-avatar {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    .header-info {
+      flex: 1;
+
+      .user-name {
+        font-size: 20px;
+        font-weight: 600;
+        color: #262626;
+        margin-bottom: 8px;
+      }
+
+      .question-status {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+
+  .detail-content {
+    .content-section {
+      margin-bottom: 24px;
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        font-weight: 600;
+        color: #262626;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        background: #f5f5f5;
+        border-radius: 4px;
+        border-left: 4px solid #1890ff;
+      }
+
+      .section-body {
+        padding: 16px;
+        background: #fafafa;
+        border-radius: 6px;
+        border: 1px solid #e8e8e8;
+        min-height: 80px;
+
+        &.ai-answer {
+          background: #f6ffed;
+          border-color: #b7eb8f;
+          border-left: 4px solid #52c41a;
+        }
+
+        .text-content {
+          margin: 0;
+          line-height: 1.8;
+          color: #262626;
+          font-size: 14px;
+          white-space: pre-wrap;
+          word-break: break-all;
+        }
+      }
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        background: #f5f5f5;
+        border-radius: 6px;
+        border: 1px solid #e8e8e8;
+
+        .info-label {
+          display: flex;
+          align-items: center;
+          font-size: 13px;
+          color: #8c8c8c;
+          margin-bottom: 8px;
+          font-weight: 500;
+
+          span {
+            margin-left: 6px;
+          }
+        }
+
+        .info-value {
+          font-size: 15px;
+          color: #262626;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
 </style>

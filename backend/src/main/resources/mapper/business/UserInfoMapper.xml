@@ -17,13 +17,16 @@
         user_id,
         user_staff_id,
         create_date,
+        birthday,
         images,
         type,
+        user_staff_id,
         integral
         from
         user_info
         where
         1 = 1
+        AND type = 1
         <if test="userInfo.name != null and userInfo.name != ''">
             AND name LIKE CONCAT('%',#{userInfo.name},'%')
         </if>

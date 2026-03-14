@@ -1,5 +1,6 @@
 package com.fank.f1k2.system.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.fank.f1k2.business.entity.StaffInfo;
 import com.fank.f1k2.business.entity.UserInfo;
 import com.fank.f1k2.business.service.IStaffInfoService;
@@ -181,7 +182,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setSsex(User.SEX_UNKNOW);
         user.setAvatar(User.DEFAULT_AVATAR);
         user.setDescription("注册用户");
+        user.setRoleFlag("1");
+        user.setName(username);
         this.save(user);
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(user.getUserId());
+        userInfo.setCode("UR-" + System.currentTimeMillis());
+        userInfo.setName(username);
+        userInfo.setType("1");
+        userInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
+        userInfoService.save(userInfo);
 
         UserRole ur = new UserRole();
         ur.setUserId(user.getUserId());
@@ -196,9 +207,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * 注册员工
+     * 注册党员
      *
-     * @param staffInfo 员工信息
+     * @param staffInfo 党员信息
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -210,7 +221,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setStatus(User.STATUS_VALID);
         user.setSsex(User.SEX_UNKNOW);
         user.setAvatar(User.DEFAULT_AVATAR);
-        user.setDescription("注册员工");
+        user.setDescription("注册党员");
+        user.setName(staffInfo.getName());
+        user.setImages(staffInfo.getImages());
+        user.setRoleFlag("2");
         this.save(user);
 
         UserRole ur = new UserRole();

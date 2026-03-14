@@ -7,7 +7,7 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="客户名称"
+                label="用户名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.name"/>
@@ -15,7 +15,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="客户编号"
+                label="用户编号"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.code"/>
@@ -50,18 +50,89 @@
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                :scroll="{ x: 900 }"
                @change="handleTableChange">
-        <template slot="titleShow" slot-scope="text, record">
-          <template>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.title }}
-              </template>
-              {{ record.title.slice(0, 8) }} ...
-            </a-tooltip>
-          </template>
+        <template slot="operation" slot-scope="text, record">
+          <a-icon type="eye" theme="twoTone" twoToneColor="#1890ff" @click="showDetail(record)" title="查看详情" style="margin-right: 10px;"></a-icon>
         </template>
       </a-table>
     </div>
+    <!-- 详情 Modal -->
+    <a-modal
+      v-model="detailModal.visible"
+      :title="detailModal.title"
+      :width="900"
+      :footer="null"
+      @cancel="handleDetailClose"
+      centered
+      :bodyStyle="{ padding: '24px' }">
+      <div class="detail-container">
+        <div class="detail-header">
+          <div class="header-avatar">
+            <a-avatar v-if="detailModal.data.images" shape="circle" size="80" icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + detailModal.data.images.split(',')[0]" />
+            <a-avatar v-else shape="circle" size="80" icon="user" style="background-color: #1890ff;" />
+          </div>
+          <div class="header-info">
+            <div class="user-name">{{ detailModal.data.name || '匿名用户' }}</div>
+            <div class="user-code">用户编号：{{ detailModal.data.code || '- -' }}</div>
+          </div>
+        </div>
+
+        <a-divider style="margin: 16px 0" />
+
+        <div class="detail-content">
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">
+                <a-icon type="phone" style="color: #1890ff;" />
+                <span>联系方式</span>
+              </div>
+              <div class="info-value">
+                <span>{{ detailModal.data.phone || '- -' }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-label">
+                <a-icon type="mail" style="color: #52c41a;" />
+                <span>邮箱地址</span>
+              </div>
+              <div class="info-value">
+                <span>{{ detailModal.data.mail || '- -' }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-label">
+                <a-icon type="calendar" style="color: #faad14;" />
+                <span>出生日期</span>
+              </div>
+              <div class="info-value">
+                <span>{{ detailModal.data.birthday || '- -' }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-label">
+                <a-icon type="clock-circle" style="color: #722ed1;" />
+                <span>注册时间</span>
+              </div>
+              <div class="info-value">
+                <span>{{ detailModal.data.createDate || '- -' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-section" style="margin-top: 24px;">
+            <div class="section-title">
+              <a-icon type="home" style="color: #1890ff; margin-right: 8px;" />
+              <span>住址信息</span>
+            </div>
+            <div class="section-body">
+              <p class="text-content">{{ detailModal.data.address || '暂无住址信息' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a-modal>
   </a-card>
 </template>
 
@@ -98,7 +169,12 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
-      userList: []
+      userList: [],
+      detailModal: {
+        visible: false,
+        title: '用户详情',
+        data: {}
+      }
     }
   },
   computed: {
@@ -107,11 +183,13 @@ export default {
     }),
     columns () {
       return [{
-        title: '客户编号',
-        dataIndex: 'code'
+        title: '用户编号',
+        dataIndex: 'code',
+        ellipsis: true
       }, {
-        title: '客户名称',
-        dataIndex: 'name'
+        title: '用户名称',
+        dataIndex: 'name',
+        ellipsis: true
       }, {
         title: '联系方式',
         dataIndex: 'phone',
@@ -121,7 +199,19 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
+      }, {
+        title: '出生日期',
+        dataIndex: 'birthday',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
+        ellipsis: true
       }, {
         title: '邮箱地址',
         dataIndex: 'mail',
@@ -131,7 +221,8 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
       }, {
         title: '头像',
         dataIndex: 'images',
@@ -145,6 +236,17 @@ export default {
           </a-popover>
         }
       }, {
+        title: '住址信息',
+        dataIndex: 'address',
+        customRender: (text, row, index) => {
+          if (text !== null) {
+            return text
+          } else {
+            return '- -'
+          }
+        },
+        ellipsis: true
+      }, {
         title: '注册时间',
         dataIndex: 'createDate',
         customRender: (text, row, index) => {
@@ -153,7 +255,12 @@ export default {
           } else {
             return '- -'
           }
-        }
+        },
+        ellipsis: true
+      }, {
+        title: '操作',
+        dataIndex: 'operation',
+        scopedSlots: {customRender: 'operation'}
       }]
     }
   },
@@ -161,6 +268,14 @@ export default {
     this.fetch()
   },
   methods: {
+    showDetail (record) {
+      this.detailModal.data = { ...record }
+      this.detailModal.visible = true
+    },
+    handleDetailClose () {
+      this.detailModal.visible = false
+      this.detailModal.data = {}
+    },
     editStatus (row, status) {
       this.$post('/business/user-info/account/status', { staffId: row.id, status }).then((r) => {
         this.$message.success('修改成功')
@@ -302,4 +417,105 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "../../../../static/less/Common";
+
+.detail-container {
+  .detail-header {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    border-radius: 8px;
+    margin-bottom: 16px;
+
+    .header-avatar {
+      margin-right: 24px;
+
+      .ant-avatar {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    .header-info {
+      flex: 1;
+
+      .user-name {
+        font-size: 20px;
+        font-weight: 600;
+        color: #262626;
+        margin-bottom: 8px;
+      }
+
+      .user-code {
+        font-size: 14px;
+        color: #8c8c8c;
+      }
+    }
+  }
+
+  .detail-content {
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        background: #f5f5f5;
+        border-radius: 6px;
+        border: 1px solid #e8e8e8;
+
+        .info-label {
+          display: flex;
+          align-items: center;
+          font-size: 13px;
+          color: #8c8c8c;
+          margin-bottom: 8px;
+          font-weight: 500;
+
+          span {
+            margin-left: 6px;
+          }
+        }
+
+        .info-value {
+          font-size: 15px;
+          color: #262626;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .content-section {
+      .section-title {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        font-weight: 600;
+        color: #262626;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        background: #f5f5f5;
+        border-radius: 4px;
+        border-left: 4px solid #1890ff;
+      }
+
+      .section-body {
+        padding: 16px;
+        background: #fafafa;
+        border-radius: 6px;
+        border: 1px solid #e8e8e8;
+        min-height: 60px;
+
+        .text-content {
+          margin: 0;
+          line-height: 1.8;
+          color: #262626;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
 </style>

@@ -89,6 +89,7 @@ public class User implements Serializable {
     private String description;
 
     private String avatar;
+    private String roleFlag;
 
     @NotBlank(message = "{required}")
     private transient String roleId;

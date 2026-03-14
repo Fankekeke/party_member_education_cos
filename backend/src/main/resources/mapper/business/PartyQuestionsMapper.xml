@@ -10,10 +10,12 @@
         pq.content,
         pq.created_at,
         ui.`name` AS userName,
-        ui.images AS userImages
+        ui.images AS userImages,
+        COUNT(pa.id) AS answerCount
         FROM
         party_questions pq
         LEFT JOIN user_info ui ON (ui.id = pq.user_id)
+        LEFT JOIN party_answers pa ON (pa.question_id = pq.id)
         WHERE
         1 = 1
         <if test="queryFrom.userName != null and queryFrom.userName != ''">

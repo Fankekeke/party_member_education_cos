@@ -7,18 +7,18 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="标题"
+                label="所属分区"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.title"/>
+                <a-input v-model="queryParams.sortType"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="内容"
+                label="用户名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.content"/>
+                <a-input v-model="queryParams.userName"/>
               </a-form-item>
             </a-col>
           </div>
@@ -31,7 +31,7 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
+<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
         <a-button @click="batchDelete">删除</a-button>
 <!--        <a-button @click="batchDelete1">删除</a-button>-->
       </div>
@@ -131,52 +131,46 @@ export default {
     }),
     columns () {
       return [{
-        title: '标题',
-        dataIndex: 'title',
+        title: '所属分区',
+        dataIndex: 'sortType',
         ellipsis: true
       }, {
         title: '笔记内容',
         dataIndex: 'content',
         ellipsis: true
       }, {
-        title: '发布时间',
-        dataIndex: 'createDate',
+        title: '用户名称',
+        ellipsis: true,
+        dataIndex: 'userName',
         customRender: (text, row, index) => {
           if (text !== null) {
             return text
           } else {
             return '- -'
-          }
-        },
-        ellipsis: true
-      }, {
-        title: '消息类型',
-        dataIndex: 'type',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 1:
-              return <a-tag>通知</a-tag>
-            case 2:
-              return <a-tag>笔记</a-tag>
-            default:
-              return '- -'
           }
         }
       }, {
-        title: '上传人',
-        dataIndex: 'publisher',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        },
+        title: '头像',
+        dataIndex: 'userImages',
+        customRender: (text, record, index) => {
+          if (!record.userImages) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.userImages } />
+          </a-popover>
+        }
+      }, {
+        title: '更新时间',
+        dataIndex: 'createdAt',
         ellipsis: true
       }, {
         title: '操作',
         dataIndex: 'operation',
-        scopedSlots: {customRender: 'operation'}
+        scopedSlots: { customRender: 'operation' },
+        width: 120,
+        fixed: 'right'
       }]
     }
   },
