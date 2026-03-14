@@ -26,7 +26,7 @@ import java.util.List;
  * @author FanK
  */
 @RestController
-@RequestMapping("/cos/post-info")
+@RequestMapping("/business/post-info")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class PostInfoController {
 

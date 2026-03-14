@@ -46,13 +46,13 @@ export default {
   },
   methods: {
     collectPostCheck (deleteFlag, collectUserId) {
-      this.$post(`/cos/focus-info`, {userId: this.currentUser.userId, collectUserId, deleteFlag}).then((r) => {
+      this.$post(`/business/focus-info`, {userId: this.currentUser.userId, collectUserId, deleteFlag}).then((r) => {
         this.getCollectList()
         this.$message.success(deleteFlag === 0 ? '关注成功！' : '取消关注成功！')
       })
     },
     getCollectList () {
-      this.$get(`/cos/focus-info/list/${this.currentUser.userId}`).then((r) => {
+      this.$get(`/business/focus-info/list/${this.currentUser.userId}`).then((r) => {
         this.collectList = r.data.data
       })
     }

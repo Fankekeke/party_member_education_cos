@@ -34,6 +34,9 @@
         <if test="queryFrom.questionType != null and queryFrom.questionType != ''">
             AND ci.question_type LIKE CONCAT('%',#{queryFrom.questionType},'%')
         </if>
+        <if test="queryFrom.userId != null and queryFrom.userId != ''">
+            AND ui.user_id = #{queryFrom.userId}
+        </if>
         ORDER BY
         uf.created_at DESC
     </select>

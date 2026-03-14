@@ -98,7 +98,7 @@ export default {
         values.deleteFlag = this.checked ? 0 : 1
         if (!err) {
           this.loading = true
-          this.$put('/cos/tag-info', {
+          this.$put('/business/tag-info', {
             ...values
           }).then((r) => {
             this.reset()

@@ -2,6 +2,8 @@ package com.fank.f1k2.business.entity;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -46,6 +48,12 @@ public class ContentVotes implements Serializable {
      * 投票时间
      */
     private String createdAt;
+
+    @TableField(exist = false)
+    private String userName;
+
+    @TableField(exist = false)
+    private String title;
 
 
 }

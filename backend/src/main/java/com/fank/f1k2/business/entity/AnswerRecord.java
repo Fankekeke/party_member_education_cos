@@ -63,6 +63,10 @@ public class AnswerRecord implements Serializable {
 
     @TableField(exist = false)
     private List<CollectionItem> collectionItemList;
+    @TableField(exist = false)
+    private String userName;
+    @TableField(exist = false)
+    private String bankName;
 
 
 }

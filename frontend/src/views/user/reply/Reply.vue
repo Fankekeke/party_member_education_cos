@@ -197,7 +197,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/reply-info/' + ids).then(() => {
+          that.$delete('/business/reply-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -268,7 +268,7 @@ export default {
         params.current = this.pagination.defaultCurrent
       }
       params.userId = this.currentUser.userId
-      this.$get('/cos/reply-info/page', {
+      this.$get('/business/reply-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

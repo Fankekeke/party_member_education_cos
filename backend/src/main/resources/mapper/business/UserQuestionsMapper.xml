@@ -28,6 +28,9 @@
         <if test="queryFrom.status != null and queryFrom.status != ''">
             AND uq.status = #{queryFrom.status}
         </if>
+        <if test="queryFrom.userId != null and queryFrom.userId != ''">
+            AND ui.user_id = #{queryFrom.userId}
+        </if>
         order uq.created_at desc
     </select>
 </mapper>

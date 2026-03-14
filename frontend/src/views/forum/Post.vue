@@ -201,7 +201,7 @@ export default {
   methods: {
     recommendList () {
       this.loading = true
-      this.$get(`/cos/post-info/recommend/${this.user.userId}`).then((r) => {
+      this.$get(`/business/post-info/recommend/${this.user.userId}`).then((r) => {
         this.postList = r.data.data
         setTimeout(() => {
           this.loading = false
@@ -209,7 +209,7 @@ export default {
       })
     },
     collectUserCheck (deleteFlag) {
-      this.$post(`/cos/focus-info`, {
+      this.$post(`/business/focus-info`, {
         userId: this.user.userId,
         collectUserId: this.postDetail.userId,
         deleteFlag
@@ -219,13 +219,13 @@ export default {
       })
     },
     collectPostCheck (deleteFlag) {
-      this.$post(`/cos/collect-info`, {userId: this.user.userId, postId: this.postDetail.id, deleteFlag}).then((r) => {
+      this.$post(`/business/collect-info`, {userId: this.user.userId, postId: this.postDetail.id, deleteFlag}).then((r) => {
         this.postReplyDetail(this.postDetail)
         this.$message.success(deleteFlag === 0 ? '收藏贴子成功！' : '取消收藏成功！')
       })
     },
     collectByUser (postId) {
-      this.$get(`/cos/post-info/collcet`, {userId: this.user.userId, postId}).then((r) => {
+      this.$get(`/business/post-info/collcet`, {userId: this.user.userId, postId}).then((r) => {
         this.collectPost = r.data.collect
         this.collectUser = r.data.focus
       })
@@ -238,7 +238,7 @@ export default {
           postId: this.postDetail.id,
           replyUserId: this.replyUser
         }
-        this.$post(`/cos/reply-info`, data).then((r) => {
+        this.$post(`/business/reply-info`, data).then((r) => {
           if (r.data.code === 500) {
             this.$message.error(r.data.msg)
           } else {
@@ -278,13 +278,13 @@ export default {
       this.collectByUser(post.id)
       this.replyUser = []
       this.fileList = []
-      this.$get(`/cos/reply-info/list/${post.id}`).then((r) => {
+      this.$get(`/business/reply-info/list/${post.id}`).then((r) => {
         this.replyList = r.data.data
         this.postDetailShow = true
       })
     },
     postInfoDetail (postId) {
-      this.$get(`/cos/post-info/${postId}`).then((r) => {
+      this.$get(`/business/post-info/${postId}`).then((r) => {
         this.postDetail = r.data
         this.imagesInit(this.postDetail.images)
       })
@@ -304,7 +304,7 @@ export default {
     },
     getPostList (tagId) {
       this.loading = true
-      this.$get(`/cos/post-info/tag/${tagId}`).then((r) => {
+      this.$get(`/business/post-info/tag/${tagId}`).then((r) => {
         this.postList = r.data.data
         setTimeout(() => {
           this.loading = false
@@ -312,7 +312,7 @@ export default {
       })
     },
     getTagList () {
-      this.$get('/cos/tag-info/list').then((r) => {
+      this.$get('/business/tag-info/list').then((r) => {
         this.tagList = [{id: -1, name: '推荐'}]
         this.tagList.push.apply(this.tagList, r.data.data)
         console.log(this.tagList)
@@ -410,7 +410,7 @@ export default {
         }
         this.tabKey = 9999
         this.tabName = '搜索'
-        this.$get(`/cos/post-info/list/${key}`).then((r) => {
+        this.$get(`/business/post-info/list/${key}`).then((r) => {
           this.postList = r.data.data
           setTimeout(() => {
             this.loading = false

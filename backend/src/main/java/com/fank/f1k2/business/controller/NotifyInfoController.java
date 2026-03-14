@@ -15,7 +15,7 @@ import java.util.List;
  * @author FanK fan1ke2ke@gmail.com
  */
 @RestController
-@RequestMapping("/cos/notify-info")
+@RequestMapping("/business/notify-info")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class NotifyInfoController {
 

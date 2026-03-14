@@ -19,7 +19,7 @@ import java.util.List;
  * @author FanK
  */
 @RestController
-@RequestMapping("/cos/tag-info")
+@RequestMapping("/business/tag-info")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TagInfoController {
 

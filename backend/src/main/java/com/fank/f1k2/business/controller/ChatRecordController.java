@@ -21,7 +21,7 @@ import java.util.List;
  * @author FanK
  */
 @RestController
-@RequestMapping("/cos/chat-record")
+@RequestMapping("/business/chat-record")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ChatRecordController {
 

@@ -147,7 +147,7 @@ export default {
         if (!err) {
           values.publisher = this.currentUser.userId
           this.loading = true
-          this.$post('/cos/post-info', {
+          this.$post('/business/post-info', {
             ...values
           }).then((r) => {
             if (r.data.code === 500) {

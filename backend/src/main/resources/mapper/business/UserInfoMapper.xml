@@ -15,8 +15,10 @@
         area,
         address,
         user_id,
+        user_staff_id,
         create_date,
         images,
+        type,
         integral
         from
         user_info

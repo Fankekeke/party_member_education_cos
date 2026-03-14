@@ -13,11 +13,11 @@
         question_bank
         WHERE
         1 = 1
-        <if test="replyInfo.code != null and replyInfo.code != ''">
-            AND code LIKE CONCAT('%',#{replyInfo.code},'%')
+        <if test="queryFrom.code != null and queryFrom.code != ''">
+            AND code LIKE CONCAT('%',#{queryFrom.code},'%')
         </if>
-        <if test="replyInfo.name != null and replyInfo.name != ''">
-            AND name LIKE CONCAT('%',#{replyInfo.name},'%')
+        <if test="queryFrom.name != null and queryFrom.name != ''">
+            AND name LIKE CONCAT('%',#{queryFrom.name},'%')
         </if>
         ORDER BY
         created_at DESC

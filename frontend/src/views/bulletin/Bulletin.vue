@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     getNewList () {
-      this.$get(`/cos/bulletin-info/list`).then((r) => {
+      this.$get(`/business/bulletin-info/list`).then((r) => {
         this.newsList = r.data.data
         this.filteredNewsList = this.newsList
       })

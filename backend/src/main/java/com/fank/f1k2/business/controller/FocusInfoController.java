@@ -19,7 +19,7 @@ import java.util.List;
  * @author FanK
  */
 @RestController
-@RequestMapping("/cos/focus-info")
+@RequestMapping("/business/focus-info")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class FocusInfoController {
 

@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     queryContacts () {
-      this.$get(`/cos/chat-record/contacts/user/${this.currentUser.userId}`).then((r) => {
+      this.$get(`/business/chat-record/contacts/user/${this.currentUser.userId}`).then((r) => {
         this.contacts = r.data.data.map(contact => ({
           id: contact.staffId,
           userId: contact.userId,
@@ -112,7 +112,7 @@ export default {
       this.loadMessages(contact.id, contact.userId)
     },
     loadMessages (hotelId, userId) {
-      this.$get(`/cos/chat-record/list`, {
+      this.$get(`/business/chat-record/list`, {
         userId: userId,
         staffId: hotelId
       }).then((r) => {
@@ -135,7 +135,7 @@ export default {
     },
     sendMsg (teacherId, studentId) {
       if (this.newMessage.trim() === '') return
-      this.$post('/cos/chat-record', {
+      this.$post('/business/chat-record', {
         hotelId: teacherId,
         userId: studentId,
         senderType: 0,

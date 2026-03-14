@@ -162,7 +162,7 @@ export default {
   },
   methods: {
     editStatus (row, status) {
-      this.$post('/cos/user-info/account/status', { staffId: row.id, status }).then((r) => {
+      this.$post('/business/user-info/account/status', { staffId: row.id, status }).then((r) => {
         this.$message.success('修改成功')
         this.fetch()
       })
@@ -211,7 +211,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/user-info/' + ids).then(() => {
+          that.$delete('/business/user-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -284,7 +284,7 @@ export default {
       if (params.type === undefined) {
         delete params.type
       }
-      this.$get('/cos/user-info/page', {
+      this.$get('/business/user-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

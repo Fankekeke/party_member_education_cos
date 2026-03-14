@@ -62,7 +62,7 @@ export default {
     },
     dataInit () {
       this.dataLoading = true
-      this.$get(`/cos/repair-info/list/staff/${this.currentUser.userId}`).then((r) => {
+      this.$get(`/business/repair-info/list/staff/${this.currentUser.userId}`).then((r) => {
         this.courseInfo = r.data.repairList
         this.dataLoading = false
       })

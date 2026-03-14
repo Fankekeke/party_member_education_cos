@@ -234,13 +234,13 @@ export default {
   methods: {
     auditDelete (row) {
       row.deleteFlag = 0
-      this.$put('/cos/post-info', row).then((r) => {
+      this.$put('/business/post-info', row).then((r) => {
         this.$message.success('恢复贴子成功！')
         this.search()
       })
     },
     getTagList () {
-      this.$get('/cos/tag-info/list').then((r) => {
+      this.$get('/business/tag-info/list').then((r) => {
         this.tagList = r.data.data
         let tagListData = []
         r.data.data.forEach(item => {
@@ -293,7 +293,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/post-info/' + ids).then(() => {
+          that.$delete('/business/post-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -367,7 +367,7 @@ export default {
         delete params.tagId
       }
       params.userId = this.currentUser.userId
-      this.$get('/cos/post-info/page', {
+      this.$get('/business/post-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

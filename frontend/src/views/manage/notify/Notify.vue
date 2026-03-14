@@ -171,7 +171,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/notify-info/' + ids).then(() => {
+          that.$delete('/business/notify-info/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -244,7 +244,7 @@ export default {
       if (params.readStatus === undefined) {
         delete params.readStatus
       }
-      this.$get('/cos/notify-info/page', {
+      this.$get('/business/notify-info/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

@@ -60,13 +60,13 @@ export default {
   },
   methods: {
     collectPostCheck (deleteFlag, postId) {
-      this.$post(`/cos/collect-info`, {userId: this.currentUser.userId, postId, deleteFlag}).then((r) => {
+      this.$post(`/business/collect-info`, {userId: this.currentUser.userId, postId, deleteFlag}).then((r) => {
         this.getCollectList()
         this.$message.success(deleteFlag === 0 ? '收藏贴子成功！' : '取消收藏成功！')
       })
     },
     getCollectList () {
-      this.$get(`/cos/collect-info/list/${this.currentUser.userId}`).then((r) => {
+      this.$get(`/business/collect-info/list/${this.currentUser.userId}`).then((r) => {
         this.collectList = r.data.data
       })
     }

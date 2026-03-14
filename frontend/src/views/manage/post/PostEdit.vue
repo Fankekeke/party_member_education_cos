@@ -183,7 +183,7 @@ export default {
         values.tagIds = this.tagCheck.join(',')
         if (!err) {
           this.loading = true
-          this.$put('/cos/post-info', {
+          this.$put('/business/post-info', {
             ...values
           }).then((r) => {
             if (r.data.code === 500) {

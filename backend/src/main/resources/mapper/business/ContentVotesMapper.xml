@@ -30,6 +30,9 @@
         <if test="queryFrom.voteType != null and queryFrom.voteType != ''">
             AND cv.vote_type = #{queryFrom.voteType}
         </if>
+        <if test="queryFrom.userId != null and queryFrom.userId != ''">
+            AND ui.user_id = #{queryFrom.userId}
+        </if>
         ORDER BY
         cv.created_at DESC
     </select>

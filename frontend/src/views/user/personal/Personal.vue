@@ -175,7 +175,7 @@ export default {
     },
     getExpertInfo (userId) {
       this.dataLoading = true
-      this.$get(`/cos/user-info/user/${userId}`).then((r) => {
+      this.$get(`/business/user-info/user/${userId}`).then((r) => {
         this.expertInfo = r.data.user
         this.setFormValues(this.expertInfo)
         this.courseInfo = r.data.order
@@ -235,7 +235,7 @@ export default {
         values.images = images.length > 0 ? images.join(',') : null
         if (!err) {
           this.loading = true
-          this.$put('/cos/user-info', {
+          this.$put('/business/user-info', {
             ...values
           }).then((r) => {
             this.$message.success('更新成功')

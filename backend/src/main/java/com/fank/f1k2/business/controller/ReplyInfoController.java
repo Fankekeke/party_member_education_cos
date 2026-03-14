@@ -24,7 +24,7 @@ import java.util.List;
  * @author FanK
  */
 @RestController
-@RequestMapping("/cos/reply-info")
+@RequestMapping("/business/reply-info")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ReplyInfoController {
 

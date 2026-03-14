@@ -20,7 +20,7 @@ import java.util.List;
  * @author FanK
  */
 @RestController
-@RequestMapping("/cos/user-info")
+@RequestMapping("/business/user-info")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserInfoController {
 

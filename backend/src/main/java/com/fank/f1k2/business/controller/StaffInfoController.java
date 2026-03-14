@@ -3,6 +3,7 @@ package com.fank.f1k2.business.controller;
 
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fank.f1k2.business.service.IUserInfoService;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fank.f1k2.business.entity.StaffInfo;
@@ -33,6 +34,8 @@ public class StaffInfoController {
     private final IStaffInfoService staffInfoService;
 
     private final UserService userService;
+
+    private final IUserInfoService userInfoService;
 
     /**
      * 分页获取员工管理

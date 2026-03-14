@@ -25,6 +25,9 @@
         <if test="queryFrom.title != null and queryFrom.title != ''">
             AND pq.title LIKE CONCAT('%',#{queryFrom.title},'%')
         </if>
+        <if test="queryFrom.userId != null and queryFrom.userId != ''">
+            AND ui.user_id = #{queryFrom.userId}
+        </if>
         ORDER BY
         pa.created_at DESC
     </select>

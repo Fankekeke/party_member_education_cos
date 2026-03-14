@@ -18,7 +18,7 @@ import java.util.List;
  * @author FanK
  */
 @RestController
-@RequestMapping("/cos/collect-info")
+@RequestMapping("/business/collect-info")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CollectInfoController {
 

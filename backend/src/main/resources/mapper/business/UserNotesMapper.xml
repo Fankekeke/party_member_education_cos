@@ -22,6 +22,9 @@
         <if test="queryFrom.sortType != null and queryFrom.sortType != ''">
             AND un.`sort_type` = #{queryFrom.sortType}
         </if>
+        <if test="queryFrom.userId != null and queryFrom.userId != ''">
+            AND ui.user_id = #{queryFrom.userId}
+        </if>
         ORDER BY
         un.created_at DESC
     </select>
