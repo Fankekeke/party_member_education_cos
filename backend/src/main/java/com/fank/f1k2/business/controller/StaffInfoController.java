@@ -3,6 +3,7 @@ package com.fank.f1k2.business.controller;
 
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fank.f1k2.business.entity.UserInfo;
 import com.fank.f1k2.business.service.IUserInfoService;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -106,6 +108,7 @@ public class StaffInfoController {
      */
     @ApiOperation(value = "新增员工", notes = "创建一个新的员工并注册关联的系统用户")
     @PostMapping
+    @Transactional(rollbackFor = Exception.class)
     public R save(StaffInfo addFrom) throws Exception {
         addFrom.setCode("SAF-" + System.currentTimeMillis());
         addFrom.setCreateDate(DateUtil.formatDateTime(new Date()));
@@ -122,6 +125,15 @@ public class StaffInfoController {
     @ApiOperation(value = "修改员工信息", notes = "更新已有的员工信息")
     @PutMapping
     public R edit(StaffInfo editFrom) {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery()
+                .eq(UserInfo::getUserStaffId, editFrom.getId()));
+        if (userInfo != null) {
+            userInfo.setName(editFrom.getName());
+            userInfo.setBirthday(editFrom.getBirthDate());
+            userInfo.setPhone(editFrom.getPhone());
+            userInfo.setImages(editFrom.getImages());
+            userInfoService.updateById(userInfo);
+        }
         return R.ok(staffInfoService.updateById(editFrom));
     }
 

@@ -1,7 +1,9 @@
 package com.fank.f1k2.system.service.impl;
 
 import com.fank.f1k2.business.entity.StaffInfo;
+import com.fank.f1k2.business.entity.UserInfo;
 import com.fank.f1k2.business.service.IStaffInfoService;
+import com.fank.f1k2.business.service.IUserInfoService;
 import com.fank.f1k2.common.domain.F1k2Constant;
 import com.fank.f1k2.common.domain.QueryRequest;
 import com.fank.f1k2.common.service.CacheService;
@@ -48,6 +50,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private IStaffInfoService staffInfoService;
+
+    @Autowired
+    private IUserInfoService userInfoService;
 
 
     @Override
@@ -215,6 +220,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         staffInfo.setSysUserId(Math.toIntExact(user.getUserId()));
         staffInfoService.save(staffInfo);
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(user.getUserId());
+        userInfo.setCode(staffInfo.getCode());
+        userInfo.setName(staffInfo.getName());
+        userInfo.setMail(staffInfo.getEmail());
+        userInfo.setBirthday(staffInfo.getBirthDate());
+        userInfo.setPhone(staffInfo.getPhone());
+        userInfo.setImages(staffInfo.getImages());
+        userInfo.setCreateDate(staffInfo.getCreateDate());
+        userInfo.setType("2");
+        userInfo.setUserStaffId(staffInfo.getId());
+        userInfoService.save(userInfo);
 
         // 创建用户默认的个性化配置
         userConfigService.initDefaultUserConfig(String.valueOf(user.getUserId()));

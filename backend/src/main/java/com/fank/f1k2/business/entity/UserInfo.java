@@ -93,5 +93,6 @@ public class UserInfo implements Serializable {
      * 积分余额
      */
     private BigDecimal integral;
-    private BigDecimal type;
+    private String type;
+    private Integer userStaffId;
 }
