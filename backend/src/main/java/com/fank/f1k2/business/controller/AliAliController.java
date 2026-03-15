@@ -60,7 +60,7 @@ public class AliAliController {
                 // 取值范围为（0,1.0)，取值越大，生成的随机性越高；取值越低，生成的确定性越高。
                 .topP(0.8)
                 //阿里云控制台DASHSCOPE获取的api-key
-                .apiKey("sk-xxxxxxxxxxxxxxxxxxx")
+                .apiKey("sk-fkeeb84a761e0941ad8b8bc9519d419dc0")
                 //启用互联网搜索，模型会将搜索结果作为文本生成过程中的参考信息，但模型会基于其内部逻辑“自行判断”是否使用互联网搜索结果。
                 .enableSearch(true)
                 .build();
@@ -90,7 +90,7 @@ public class AliAliController {
             MultiModalConversationParam param = MultiModalConversationParam.builder()
                     .model(MultiModalConversation.Models.QWEN_VL_PLUS)
                     .message(userMessage)
-                    .apiKey("sk-xxxxxxxxxxxxxxxxxxx")
+                    .apiKey("sk-fkeeb84a761e0941ad8b8bc9519d419dc0")
                     .build();
             MultiModalConversation conv = new MultiModalConversation();
             MultiModalConversationResult result = conv.call(param);

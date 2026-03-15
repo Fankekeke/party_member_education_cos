@@ -66,6 +66,17 @@ public class UserQuestionsController {
     }
 
     /**
+     * 查询AI答疑历史记录
+     *
+     * @return 列表
+     */
+    @GetMapping("/queryHistoryByUser")
+    public R queryHistoryByUser(Integer userId) {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, userId));
+        return R.ok(bulletinInfoService.list(Wrappers.<UserQuestions>lambdaQuery().eq(UserQuestions::getUserId, userInfo.getId())));
+    }
+
+    /**
      * 新增AI答疑
      *
      * @param addFrom AI答疑对象

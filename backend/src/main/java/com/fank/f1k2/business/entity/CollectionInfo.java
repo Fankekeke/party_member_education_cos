@@ -52,6 +52,7 @@ public class CollectionInfo implements Serializable {
     /**
      * 题目内容/题干
      */
+    @TableField("`desc`")
     private String desc;
 
     /**

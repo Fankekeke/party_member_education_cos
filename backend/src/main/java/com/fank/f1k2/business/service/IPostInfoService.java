@@ -24,6 +24,17 @@ public interface IPostInfoService extends IService<PostInfo> {
      */
     IPage<LinkedHashMap<String, Object>> selectUserPage(Page page, User user);
 
+    // 获取模块下的贴子
+    List<LinkedHashMap<String, Object>> getPostByTagUser(Integer tagId, Integer userId);
+
+    /**
+     * 获取用户详情
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    LinkedHashMap<String, Object> queryUserDetail(Integer userId);
+
     // 分页获取帖子信息
     IPage<LinkedHashMap<String, Object>> postInfoByPage(Page page, PostInfo postInfo);
 

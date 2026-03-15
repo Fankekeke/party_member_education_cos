@@ -57,6 +57,17 @@ public class PostInfoController {
     }
 
     /**
+     * 获取模块下的贴子
+     *
+     * @param tagId
+     * @return
+     */
+    @GetMapping("/tagByUser")
+    public R getPostByTagUser(Integer tagId, Integer userId) {
+        return R.ok(postInfoService.getPostByTagUser(tagId, userId));
+    }
+
+    /**
      * 用户状态更改
      *
      * @param flag
@@ -91,6 +102,17 @@ public class PostInfoController {
             }
         };
         return R.ok(result);
+    }
+
+    /**
+     * 获取用户详情
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    @GetMapping("/user/detail")
+    public R queryUserDetail(Integer userId) {
+        return R.ok(postInfoService.queryUserDetail(userId));
     }
 
     /**

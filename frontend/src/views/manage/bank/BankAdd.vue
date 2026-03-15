@@ -71,9 +71,9 @@
               <a-button type="primary" icon="plus" @click="addQuestion" size="large">
                 添加题目
               </a-button>
-              <a-button icon="copy" @click="batchAddQuestions" size="large">
-                批量导入
-              </a-button>
+<!--              <a-button icon="copy" @click="batchAddQuestions" size="large">-->
+<!--                批量导入-->
+<!--              </a-button>-->
               <a-divider type="vertical" />
               <a-button @click="expandAll" size="large">
                 展开全部
@@ -105,7 +105,7 @@
                   <a-tag :color="getQuestionTypeColor(question.questionType)">
                     {{ getQuestionTypeLabel(question.questionType) }}
                   </a-tag>
-                  <a-tag v-if="isQuestionComplete(question)" color="success">
+                  <a-tag v-if="isQuestionComplete(question)" color="green">
                     <a-icon type="check-circle" /> 已完成
                   </a-tag>
                   <a-tag v-else color="yellow">
@@ -144,9 +144,9 @@
                     <!-- 题目类型 -->
                     <a-form-model-item label="题目类型" :labelCol="{ span: 24 }" :wrapperCol="{ span: 24 }">
                       <a-radio-group v-model="question.questionType" button-style="solid">
-                        <a-radio-button value="single">单选题</a-radio-button>
-                        <a-radio-button value="multiple">多选题</a-radio-button>
-                        <a-radio-button value="judge">判断题</a-radio-button>
+                        <a-radio-button value="单选题">单选题</a-radio-button>
+                        <a-radio-button value="多选题">多选题</a-radio-button>
+                        <a-radio-button value="判断题">判断题</a-radio-button>
                       </a-radio-group>
                     </a-form-model-item>
                   </a-col>
@@ -171,7 +171,7 @@
                 <!-- 选项列表 -->
                 <a-divider orientation="left">
                   <span style="font-weight: 500;">选项列表</span>
-                  <a-button type="dashed" size="small" icon="plus" @click.stop="addOption(qIndex)" style="margin-left: 12px;" v-if="question.questionType !== 'judge'">
+                  <a-button type="dashed" size="small" icon="plus" @click.stop="addOption(qIndex)" style="margin-left: 12px;" v-if="question.questionType !== '判断题'">
                     添加选项
                   </a-button>
                 </a-divider>
@@ -191,12 +191,11 @@
                         <a-input
                           v-model="option.content"
                           placeholder="请输入选项内容"
-                          :disabled="question.questionType === 'judge'"
                           @blur="validateOptions(qIndex)" />
                       </a-col>
                       <a-col :span="6">
                         <a-checkbox
-                          v-if="question.questionType === 'multiple'"
+                          v-if="question.questionType === '多选题'"
                           v-model="option.isCorrect"
                           :checked="option.isCorrect">
                           <span :class="{ 'correct-text': option.isCorrect, 'error-text': !option.isCorrect }">
@@ -204,19 +203,19 @@
                           </span>
                         </a-checkbox>
                         <a-radio
-                          v-else-if="question.questionType === 'single'"
+                          v-else-if="question.questionType === '单选题'"
                           :checked="option.isCorrect"
                           @change="onRadioChange($event, qIndex, oIndex)">
                           <span :class="{ 'correct-text': option.isCorrect, 'error-text': !option.isCorrect }">
                             {{ option.isCorrect ? '✓ 正确答案' : '✗ 错误答案' }}
                           </span>
                         </a-radio>
-                        <div v-else-if="question.questionType === 'judge'" class="judge-tip" :class="'judge-' + oIndex">
+                        <div v-else-if="question.questionType === '判断题'" class="judge-tip" :class="'judge-' + oIndex">
                           <a-icon :type="oIndex === 0 ? 'check-circle' : 'close-circle'" />
                           {{ oIndex === 0 ? '正确' : '错误' }}
                         </div>
                       </a-col>
-                      <a-col :span="2" v-if="question.questionType !== 'judge'">
+                      <a-col :span="2" v-if="question.questionType !== '判断题'">
                         <a-popconfirm
                           title="确定删除此选项吗？"
                           @confirm="removeOption(qIndex, oIndex)"
@@ -338,7 +337,7 @@ export default {
       formFix: {
         questions: [{
           desc: '',
-          questionType: 'single',
+          questionType: '单选题',
           score: 10,
           tags: '',
           options: [
@@ -395,7 +394,7 @@ export default {
     // 判断题目是否完成
     isQuestionComplete (question) {
       const hasDesc = question.desc && question.desc.trim()
-      const hasOptions = question.options.every(opt => opt.content || question.questionType === 'judge')
+      const hasOptions = question.options.every(opt => opt.content || question.questionType === '判断题')
       const hasCorrect = question.options.some(opt => opt.isCorrect)
       return hasDesc && hasOptions && hasCorrect
     },
@@ -403,9 +402,9 @@ export default {
     // 获取题型颜色
     getQuestionTypeColor (type) {
       const map = {
-        'single': 'blue',
-        'multiple': 'green',
-        'judge': 'orange'
+        '单选题': 'blue',
+        '多选题': 'green',
+        '判断题': 'orange'
       }
       return map[type] || 'default'
     },
@@ -413,9 +412,9 @@ export default {
     // 获取题型标签
     getQuestionTypeLabel (type) {
       const map = {
-        'single': '单选题',
-        'multiple': '多选题',
-        'judge': '判断题'
+        '单选题': '单选题',
+        '多选题': '多选题',
+        '判断题': '判断题'
       }
       return map[type] || type
     },
@@ -452,7 +451,7 @@ export default {
     // 重置选项
     resetOptions (questionIndex, type) {
       const question = this.formFix.questions[questionIndex]
-      if (type === 'judge') {
+      if (type === '判断题') {
         question.options = [
           { content: '正确', isCorrect: true },
           { content: '错误', isCorrect: false }
@@ -488,7 +487,7 @@ export default {
       const newIndex = this.formFix.questions.length
       this.formFix.questions.push({
         desc: '',
-        questionType: 'single',
+        questionType: '单选题',
         score: 10,
         tags: '',
         options: [
@@ -522,7 +521,7 @@ export default {
     // 验证选项
     validateOptions (questionIndex) {
       const question = this.formFix.questions[questionIndex]
-      const emptyOption = question.options.find(opt => !opt.content.trim() && question.questionType !== 'judge')
+      const emptyOption = question.options.find(opt => !opt.content.trim() && question.questionType !== '判断题')
       if (emptyOption) {
         this.$message.warning('请填写完整的选项内容')
       }
@@ -535,11 +534,11 @@ export default {
         .filter(opt => opt.isCorrect)
         .map((opt, index) => String.fromCharCode(65 + index))
 
-      if (question.questionType === 'single') {
+      if (question.questionType === '单选题') {
         question.correctAnswer = correctOptions[0] || ''
-      } else if (question.questionType === 'multiple') {
+      } else if (question.questionType === '多选题') {
         question.correctAnswer = correctOptions.join('') || ''
-      } else if (question.questionType === 'judge') {
+      } else if (question.questionType === '判断题') {
         const isCorrect = question.options[0].isCorrect
         question.correctAnswer = isCorrect ? 'true' : 'false'
       }
@@ -571,7 +570,7 @@ export default {
           break
         }
 
-        if (question.questionType !== 'judge') {
+        if (question.questionType !== '判断题') {
           const emptyOption = question.options.find(opt => !opt.content || !opt.content.trim())
           if (emptyOption) {
             this.$message.warning(`第 ${qIndex + 1} 题的选项内容不完整`)
@@ -587,7 +586,7 @@ export default {
           break
         }
 
-        if (question.questionType === 'multiple') {
+        if (question.questionType === '多选题') {
           const correctCount = question.options.filter(opt => opt.isCorrect).length
           if (correctCount < 2) {
             this.$message.warning(`第 ${qIndex + 1} 题是多选题，请至少设置两个正确答案`)
@@ -612,13 +611,32 @@ export default {
       }))
 
       this.submitLoading = true
+      console.log(JSON.stringify(collectionItemList))
 
-      setTimeout(() => {
-        this.$message.success(`成功添加 ${collectionItemList.length} 道题目`)
-        this.submitLoading = false
-        this.$emit('success', collectionItemList)
-        this.handleClose()
-      }, 1000)
+      // 获取图片List
+      let images = []
+      this.fileList.forEach(image => {
+        images.push(image.response)
+      })
+      this.form.validateFields((err, values) => {
+        values.image = images.length > 0 ? images.join(',') : null
+        values.collectionItemList = JSON.stringify(collectionItemList)
+        if (!err) {
+          this.submitLoading = true
+          this.$post('/business/question-bank', {
+            ...values
+          }).then((r) => {
+            this.$message.success(`成功添加 ${collectionItemList.length} 道题目`)
+            this.submitLoading = false
+            this.$emit('success', collectionItemList)
+            this.handleClose()
+          }).catch(() => {
+            this.submitLoading = false
+          })
+        } else {
+          this.submitLoading = false
+        }
+      })
     },
 
     handleClose () {
@@ -631,7 +649,7 @@ export default {
       this.formFix = {
         questions: [{
           desc: '',
-          questionType: 'single',
+          questionType: '单选题',
           score: 10,
           tags: '',
           options: [

@@ -54,6 +54,9 @@ public class QuestionBank implements Serializable {
     /**
      * 题库选项集合
      */
+//    @TableField(exist = false)
+//    private List<CollectionItem> collectionItemList;
+
     @TableField(exist = false)
-    private List<CollectionItem> collectionItemList;
+    private String collectionItemList;
 }

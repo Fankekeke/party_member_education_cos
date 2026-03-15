@@ -101,7 +101,7 @@
             >
               <a-list-item slot="renderItem" slot-scope="item, index">
                 <a-comment :author="item.username" shape="square"
-                           :avatar="'http://127.0.0.1:9527/imagesWeb/' + item.images">
+                           :avatar="'http://127.0.0.1:9527/imagesWeb/' + item.images" @click="pushToDetail(item.userId)">
                   <template slot="actions">
                     <span @click="replyUserAdd(item)">回复</span>
                   </template>
@@ -199,6 +199,14 @@ export default {
     this.getTagList()
   },
   methods: {
+    pushToDetail (userId) {
+      this.$router.push({
+        path: '/userDetail',
+        query: {
+          id: userId
+        }
+      })
+    },
     recommendList () {
       this.loading = true
       this.$get(`/business/post-info/recommend/${this.user.userId}`).then((r) => {

@@ -36,6 +36,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     @Resource
     private ICollectionInfoService collectionInfoService;
 
+    @Resource
     private ICollectionOptionsService collectionOptionsService;
 
     /**
@@ -59,7 +60,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean addQuestionBank(QuestionBank questionBank) throws F1k2Exception {
-        if (CollectionUtil.isEmpty(questionBank.getCollectionItemList())) {
+        if (StrUtil.isEmpty(questionBank.getCollectionItemList())) {
             throw new F1k2Exception("请添加题目选项");
         }
         this.save(questionBank);
@@ -67,7 +68,8 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         List<CollectionInfo> toAddCollectionList = new ArrayList<>();
         List<CollectionOptions> toAddCollectionOptionList = new ArrayList<>();
 
-        for (CollectionItem collectionItem : questionBank.getCollectionItemList()) {
+        List<CollectionItem> collectionItemList = JSONUtil.toList(questionBank.getCollectionItemList(), CollectionItem.class);
+        for (CollectionItem collectionItem : collectionItemList) {
             CollectionInfo collectionInfo = JSONUtil.toBean(collectionItem.getCollection(), CollectionInfo.class);
             collectionInfo.setCollectionId(questionBank.getId());
             collectionInfo.setCreationTime(DateUtil.formatDateTime(new Date()));
@@ -101,7 +103,7 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
      */
     @Override
     public boolean editQuestionBank(QuestionBank questionBank) throws F1k2Exception {
-        if (CollectionUtil.isEmpty(questionBank.getCollectionItemList())) {
+        if (StrUtil.isEmpty(questionBank.getCollectionItemList())) {
             throw new F1k2Exception("请添加题目选项");
         }
         this.updateById(questionBank);
@@ -116,7 +118,8 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         List<CollectionInfo> toAddCollectionList = new ArrayList<>();
         List<CollectionOptions> toAddCollectionOptionList = new ArrayList<>();
 
-        for (CollectionItem collectionItem : questionBank.getCollectionItemList()) {
+        List<CollectionItem> collectionItemList = JSONUtil.toList(questionBank.getCollectionItemList(), CollectionItem.class);
+        for (CollectionItem collectionItem : collectionItemList) {
             CollectionInfo collectionInfo = JSONUtil.toBean(collectionItem.getCollection(), CollectionInfo.class);
             collectionInfo.setCollectionId(questionBank.getId());
             collectionInfo.setCreationTime(DateUtil.formatDateTime(new Date()));

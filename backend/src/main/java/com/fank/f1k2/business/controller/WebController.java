@@ -72,8 +72,8 @@ public class WebController {
         if (userId == null) {
             return R.error("用户 ID 不能为空");
         }
-
-        UserLearningStatsVO statsVO = userLearningStatsService.getUserLearningStats(userId);
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, userId));
+        UserLearningStatsVO statsVO = userLearningStatsService.getUserLearningStats(userInfo.getId());
         if (statsVO == null || statsVO.getUserBasic() == null) {
             return R.error("未找到用户信息");
         }

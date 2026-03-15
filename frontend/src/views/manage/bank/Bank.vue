@@ -7,18 +7,18 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="标题"
+                label="题库编号"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.title"/>
+                <a-input v-model="queryParams.code"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="内容"
+                label="题库名称"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.content"/>
+                <a-input v-model="queryParams.name"/>
               </a-form-item>
             </a-col>
           </div>
@@ -45,33 +45,158 @@
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                :scroll="{ x: 900 }"
                @change="handleTableChange">
-        <template slot="titleShow" slot-scope="text, record">
-          <template>
-            <a-badge status="processing" v-if="record.rackUp === 1"/>
-            <a-badge status="error" v-if="record.rackUp === 0"/>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.title }}
-              </template>
-              {{ record.title.slice(0, 8) }} ...
-            </a-tooltip>
-          </template>
+        <template slot="code" slot-scope="text">
+          <a-tooltip v-if="text">
+            <template slot="title">{{ text }}</template>
+            <span class="table-text-ellipsis">{{ text }}</span>
+          </a-tooltip>
+          <span v-else>- -</span>
         </template>
-        <template slot="contentShow" slot-scope="text, record">
-          <template>
-            <a-tooltip>
-              <template slot="title">
-                {{ record.content }}
-              </template>
-              {{ record.content.slice(0, 30) }} ...
-            </a-tooltip>
-          </template>
+
+        <template slot="name" slot-scope="text">
+          <a-tooltip v-if="text">
+            <template slot="title">{{ text }}</template>
+            <span class="table-text-ellipsis">{{ text }}</span>
+          </a-tooltip>
+          <span v-else>- -</span>
         </template>
+
+        <template slot="image" slot-scope="text, record">
+          <a-popover v-if="record.image">
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + record.image" />
+            </template>
+            <a-avatar shape="square" icon="user" :src="'http://127.0.0.1:9527/imagesWeb/' + record.image" />
+          </a-popover>
+          <a-avatar v-else shape="square" icon="user" />
+        </template>
+
+        <template slot="collectionCount" slot-scope="text">
+          <a-badge v-if="text !== null && text !== undefined" :count="text" :numberStyle="{ backgroundColor: '#1890ff' }" />
+          <span v-else style="color: #999;">0</span>
+        </template>
+
+        <template slot="questionTypes" slot-scope="text, record">
+          <div class="question-type-tags">
+            <a-tag color="blue" v-if="record.singleCount > 0">
+              单选 {{ record.singleCount }}
+            </a-tag>
+            <a-tag color="green" v-if="record.multipleCount > 0">
+              多选 {{ record.multipleCount }}
+            </a-tag>
+            <a-tag color="orange" v-if="record.judgeCount > 0">
+              判断 {{ record.judgeCount }}
+            </a-tag>
+            <span v-if="!record.singleCount && !record.multipleCount && !record.judgeCount" style="color: #999;">-</span>
+          </div>
+        </template>
+
+        <template slot="createDate" slot-scope="text">
+          <span v-if="text">{{ text }}</span>
+          <span v-else style="color: #999;">- -</span>
+        </template>
+
         <template slot="operation" slot-scope="text, record">
-          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
+          <a-icon type="eye" theme="twoTone" twoToneColor="#1890ff" @click="showDetail(record)" title="查看详情" style="margin-right: 10px;"></a-icon>
         </template>
       </a-table>
     </div>
+    <!-- 详情 Modal -->
+    <a-modal
+      v-model="detailModal.visible"
+      :title="detailModal.title"
+      :width="1200"
+      :footer="null"
+      @cancel="handleDetailClose"
+      centered
+      :bodyStyle="{ padding: '24px' }"
+      wrapClassName="bank-detail-modal">
+
+      <div class="bank-detail-container" v-if="detailModal.loaded">
+        <!-- 题库基本信息 -->
+        <div class="bank-header">
+          <div class="bank-cover">
+            <a-avatar v-if="detailModal.data.bank && detailModal.data.bank.image" shape="square" size="120" icon="book" :src="'http://127.0.0.1:9527/imagesWeb/' + detailModal.data.bank.image" />
+            <a-avatar v-else shape="square" size="120" icon="book" style="background-color: #1890ff;" />
+          </div>
+          <div class="bank-info">
+            <h2 class="bank-title">{{ (detailModal.data.bank && detailModal.data.bank.name) || '-' }}</h2>
+            <div class="bank-meta">
+              <a-tag color="blue">{{ (detailModal.data.bank && detailModal.data.bank.code) || '-' }}</a-tag>
+              <a-tag><a-icon type="clock-circle" /> {{ (detailModal.data.bank && detailModal.data.bank.createDate) || '-' }}</a-tag>
+            </div>
+            <div class="bank-stats">
+              <a-statistic title="总题数" :value="(detailModal.data.bank && detailModal.data.bank.collectionCount) || 0" :value-style="{ fontSize: '20px', fontWeight: 'bold' }" />
+              <a-divider type="vertical" />
+              <a-statistic title="单选题" :value="(detailModal.data.bank && detailModal.data.bank.singleCount) || 0" :value-style="{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }" />
+              <a-divider type="vertical" />
+              <a-statistic title="多选题" :value="(detailModal.data.bank && detailModal.data.bank.multipleCount) || 0" :value-style="{ fontSize: '20px', fontWeight: 'bold', color: '#52c41a' }" />
+              <a-divider type="vertical" />
+              <a-statistic title="判断题" :value="(detailModal.data.bank && detailModal.data.bank.judgeCount) || 0" :value-style="{ fontSize: '20px', fontWeight: 'bold', color: '#faad14' }" />
+            </div>
+          </div>
+        </div>
+
+        <a-divider style="margin: 24px 0" />
+
+        <!-- 题目列表 -->
+        <div class="questions-section">
+          <h3 class="section-title">
+            <a-icon type="file-text" style="color: #1890ff; margin-right: 8px;" />
+            <span>题目列表 ({{ (detailModal.collection && detailModal.collection.length) || 0 }})</span>
+          </h3>
+
+          <div class="questions-list">
+            <div
+              v-for="(question, index) in (detailModal.collection || [])"
+              :key="question.id"
+              class="question-card"
+              :class="'type-' + getQuestionTypeClass(question.questionType)">
+
+              <div class="question-header">
+                <div class="question-number">
+                  <span>{{ index + 1 }}</span>
+                </div>
+                <div class="question-meta">
+                  <div class="question-info">
+                    <a-tag :color="getQuestionTypeColor(question.questionType)">
+                      {{ formatQuestionType(question.questionType) }}
+                    </a-tag>
+                    <a-tag color="purple">{{ question.score }}分</a-tag>
+                    <a-tag v-if="question.tags">{{ question.tags }}</a-tag>
+                  </div>
+                  <div class="question-time">
+                    <a-icon type="clock-circle" />
+                    <span>{{ question.creationTime || '-' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="question-content">
+                <p class="question-desc">{{ question.desc || '无题目内容' }}</p>
+              </div>
+
+              <div class="question-options">
+                <div
+                  v-for="(option, optIndex) in (question.collectionOptionsList || [])"
+                  :key="option.id"
+                  class="option-item"
+                  :class="{ 'correct': option.isCorrect === 1 }">
+                  <div class="option-label">{{ getOptionLabel(optIndex) }}</div>
+                  <div class="option-content">{{ option.content }}</div>
+                  <div class="option-mark" v-if="option.isCorrect === 1">
+                    <a-icon type="check-circle" theme="filled" />
+                    <span>正确答案</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <a-empty v-if="!detailModal.collection || detailModal.collection.length === 0" description="暂无题目" />
+          </div>
+        </div>
+      </div>
+    </a-modal>
     <bulletin-add
       v-if="bulletinAdd.visiable"
       @close="handleBulletinAddClose"
@@ -122,7 +247,14 @@ export default {
         showSizeChanger: true,
         showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
       },
-      userList: []
+      userList: [],
+      detailModal: {
+        visible: false,
+        title: '题库详情',
+        data: {},
+        collection: [],
+        loaded: false
+      }
     }
   },
   computed: {
@@ -131,52 +263,46 @@ export default {
     }),
     columns () {
       return [{
-        title: '标题',
-        dataIndex: 'title',
-        ellipsis: true
+        title: '题库编号',
+        dataIndex: 'code',
+        ellipsis: true,
+        scopedSlots: { customRender: 'code' },
+        width: 180
       }, {
-        title: '题库内容',
-        dataIndex: 'content',
-        ellipsis: true
+        title: '题库名称',
+        dataIndex: 'name',
+        ellipsis: true,
+        scopedSlots: { customRender: 'name' },
+        width: 250
+      }, {
+        title: '图册',
+        dataIndex: 'image',
+        ellipsis: true,
+        scopedSlots: { customRender: 'image' },
+        width: 100
+      }, {
+        title: '题目数量',
+        dataIndex: 'collectionCount',
+        ellipsis: true,
+        scopedSlots: { customRender: 'collectionCount' },
+        width: 100
+      }, {
+        title: '题型分布',
+        ellipsis: true,
+        scopedSlots: { customRender: 'questionTypes' },
+        width: 180
       }, {
         title: '发布时间',
         dataIndex: 'createDate',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        },
-        ellipsis: true
-      }, {
-        title: '消息类型',
-        dataIndex: 'type',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 1:
-              return <a-tag>通知</a-tag>
-            case 2:
-              return <a-tag>题库</a-tag>
-            default:
-              return '- -'
-          }
-        }
-      }, {
-        title: '上传人',
-        dataIndex: 'publisher',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
-        },
-        ellipsis: true
+        ellipsis: true,
+        scopedSlots: { customRender: 'createDate' },
+        width: 180
       }, {
         title: '操作',
         dataIndex: 'operation',
-        scopedSlots: {customRender: 'operation'}
+        scopedSlots: { customRender: 'operation' },
+        width: 120,
+        fixed: 'right'
       }]
     }
   },
@@ -184,6 +310,61 @@ export default {
     this.fetch()
   },
   methods: {
+    showDetail (record) {
+      this.detailModal.visible = true
+      this.detailModal.loaded = false
+      this.queryBankDetail(record)
+    },
+
+    handleDetailClose () {
+      this.detailModal.visible = false
+      this.detailModal.data = {}
+      this.detailModal.collection = []
+      this.detailModal.loaded = false
+    },
+
+    // 获取题型颜色
+    getQuestionTypeColor (type) {
+      const map = {
+        '单选题': 'blue',
+        '多选题': 'green',
+        '判断题': 'orange'
+      }
+      return map[type] || 'default'
+    },
+
+    // 格式化题型显示
+    formatQuestionType (type) {
+      return type || '未知题型'
+    },
+
+    // 获取题型样式类
+    getQuestionTypeClass (type) {
+      const map = {
+        '单选题': 'single',
+        '多选题': 'multiple',
+        '判断题': 'judge'
+      }
+      return map[type] || ''
+    },
+
+    // 获取选项标签
+    getOptionLabel (index) {
+      return String.fromCharCode(65 + index)
+    },
+
+    queryBankDetail (record) {
+      this.$get('/business/question-bank/queryBankDetail', {
+        bandId: record.id
+      }).then((r) => {
+        this.detailModal.data = r.data
+        this.detailModal.data.bank = record
+        this.detailModal.collection = r.data.collection || []
+        this.detailModal.loaded = true
+      }).catch(() => {
+        this.detailModal.loaded = true
+      })
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -320,4 +501,229 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "../../../../static/less/Common";
+
+.table-text-ellipsis {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.question-type-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.table-text-ellipsis {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.question-type-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.bank-detail-modal {
+  :deep(.ant-modal-body) {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+}
+
+.bank-detail-container {
+  .bank-header {
+    display: flex;
+    gap: 24px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    border-radius: 12px;
+
+    .bank-cover {
+      flex-shrink: 0;
+
+      .ant-avatar {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    .bank-info {
+      flex: 1;
+
+      .bank-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #262626;
+        margin: 0 0 12px 0;
+      }
+
+      .bank-meta {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .bank-stats {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+    }
+  }
+
+  .questions-section {
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #262626;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .questions-list {
+      .question-card {
+        background: #fff;
+        border: 2px solid #e8e8e8;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        transition: all 0.3s;
+
+        &:hover {
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        &.type-single {
+          border-left: 4px solid #1890ff;
+        }
+
+        &.type-multiple {
+          border-left: 4px solid #52c41a;
+        }
+
+        &.type-judge {
+          border-left: 4px solid #faad14;
+        }
+
+        .question-header {
+          display: flex;
+          gap: 16px;
+          padding: 16px 20px;
+          background: #fafafa;
+          border-radius: 8px 8px 0 0;
+          border-bottom: 1px solid #e8e8e8;
+
+          .question-number {
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 16px;
+            flex-shrink: 0;
+          }
+
+          .question-meta {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .question-info {
+              display: flex;
+              gap: 8px;
+              align-items: center;
+              flex-wrap: wrap;
+            }
+
+            .question-time {
+              color: #8c8c8c;
+              font-size: 13px;
+              display: flex;
+              align-items: center;
+              gap: 4px;
+            }
+          }
+        }
+
+        .question-content {
+          padding: 20px;
+
+          .question-desc {
+            margin: 0;
+            line-height: 1.8;
+            color: #262626;
+            font-size: 15px;
+            white-space: pre-wrap;
+          }
+        }
+
+        .question-options {
+          padding: 0 20px 20px 20px;
+
+          .option-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: #fafafa;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+
+            &:hover {
+              background: #fff;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            }
+
+            &.correct {
+              background: #f6ffed;
+              border-color: #b7eb8f;
+            }
+
+            .option-label {
+              width: 28px;
+              height: 28px;
+              line-height: 28px;
+              text-align: center;
+              background: #1890ff;
+              color: #fff;
+              border-radius: 50%;
+              font-weight: bold;
+              font-size: 14px;
+              flex-shrink: 0;
+            }
+
+            .option-content {
+              flex: 1;
+              line-height: 28px;
+              color: #262626;
+              font-size: 14px;
+            }
+
+            .option-mark {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              color: #52c41a;
+              font-weight: 500;
+              font-size: 13px;
+
+              .anticon {
+                font-size: 16px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 </style>

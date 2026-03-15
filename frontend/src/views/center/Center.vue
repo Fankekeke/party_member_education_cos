@@ -17,7 +17,7 @@
           </p>
           <p class="user-content">
             <a-icon type="edit" style="margin-right: 8px; color: #81c784;" />
-            {{ userProfile.content || '暂无个人简介' }}
+            {{ userProfile.address || '暂无个人地址' }}
           </p>
           <div class="user-stats">
             <span class="stat-item">
@@ -80,7 +80,7 @@
           </div>
           <p style="font-size: 22px;color: black;font-weight: 500;line-height: 150%;margin: 25px 50px;margin-top: 50px">
             {{ postDetail.title }}
-            <a-icon type="form" style="cursor: pointer" v-if="currentUser.userId === postDetail.userId" @click="edit(postDetail)"/>
+<!--            <a-icon type="form" style="cursor: pointer" v-if="currentUser.userId === postDetail.userId" @click="edit(postDetail)"/>-->
           </p>
           <div style="margin: 25px 50px;font-size: 13px">
             <a-icon v-if="currentUser.userId != postDetail.userId && collectUser === 0" type="heart" style="margin-right: 10px;cursor: pointer" @click="collectUserCheck(0)"/>

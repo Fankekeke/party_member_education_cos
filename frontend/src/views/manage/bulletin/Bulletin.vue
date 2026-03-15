@@ -155,9 +155,11 @@ export default {
         customRender: (text, row, index) => {
           switch (text) {
             case 1:
-              return <a-tag>通知</a-tag>
+              return <a-tag>系统公告</a-tag>
             case 2:
-              return <a-tag>公告</a-tag>
+              return <a-tag>活动通知</a-tag>
+            case 3:
+              return <a-tag>紧急消息</a-tag>
             default:
               return '- -'
           }

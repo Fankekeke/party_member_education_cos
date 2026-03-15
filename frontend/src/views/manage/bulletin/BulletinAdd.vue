@@ -32,8 +32,9 @@
               'type',
               { rules: [{ required: true, message: '请输入公告类型!' }] }
               ]">
-              <a-select-option value="1">通知</a-select-option>
-              <a-select-option value="2">公告</a-select-option>
+              <a-select-option value="1">系统公告</a-select-option>
+              <a-select-option value="2">活动通知</a-select-option>
+              <a-select-option value="3">紧急消息</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>

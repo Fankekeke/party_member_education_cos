@@ -4,13 +4,18 @@
 
     <select id="queryPage" resultType="java.util.LinkedHashMap">
         SELECT
-        id,
-        CODE,
-        NAME,
-        image,
-        create_date
+        qb.id,
+        qb.CODE,
+        qb.NAME,
+        qb.image,
+        qb.create_date,
+        count(ci.id) AS collectionCount,
+        SUM(CASE WHEN ci.question_type = '单选题' THEN 1 ELSE 0 END) AS singleCount,
+        SUM(CASE WHEN ci.question_type = '多选题' THEN 1 ELSE 0 END) AS multipleCount,
+        SUM(CASE WHEN ci.question_type = '判断题' THEN 1 ELSE 0 END) AS judgeCount
         FROM
-        question_bank
+        question_bank qb
+        LEFT JOIN collection_info ci ON qb.id = ci.collection_id
         WHERE
         1 = 1
         <if test="queryFrom.code != null and queryFrom.code != ''">
@@ -20,6 +25,6 @@
             AND name LIKE CONCAT('%',#{queryFrom.name},'%')
         </if>
         ORDER BY
-        created_at DESC
+        qb.create_date DESC
     </select>
 </mapper>

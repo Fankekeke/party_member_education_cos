@@ -39,7 +39,7 @@ public class CollectionOptions implements Serializable {
     /**
      * 是否为正确答案：0-否, 1-是
      */
-    private Boolean isCorrect;
+    private Integer isCorrect;
 
 
 }

@@ -196,7 +196,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         UserRole ur = new UserRole();
         ur.setUserId(user.getUserId());
-        ur.setRoleId(2L); // 注册用户角色 ID
+        ur.setRoleId(75L); // 注册用户角色 ID
         this.userRoleMapper.insert(ur);
 
         // 创建用户默认的个性化配置
@@ -229,7 +229,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         UserRole ur = new UserRole();
         ur.setUserId(user.getUserId());
-        ur.setRoleId(75L);
+        ur.setRoleId(76L);
         this.userRoleMapper.insert(ur);
 
         staffInfo.setSysUserId(Math.toIntExact(user.getUserId()));

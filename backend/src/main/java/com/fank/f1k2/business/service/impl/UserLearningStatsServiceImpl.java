@@ -58,7 +58,7 @@ public class UserLearningStatsServiceImpl implements IUserLearningStatsService {
      */
     private UserLearningStatsVO.UserInfoBasic buildUserBasic(Integer userId) {
         UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery()
-                .eq(UserInfo::getUserId, userId));
+                .eq(UserInfo::getId, userId));
 
         if (userInfo == null) {
             return null;
@@ -153,13 +153,12 @@ public class UserLearningStatsServiceImpl implements IUserLearningStatsService {
         }
 
         // 2. 查询最近的党务公告（优先匹配兴趣）
-        String todayStart = DateUtil.beginOfDay(new Date()).toString();
-        String todayEnd = DateUtil.endOfDay(new Date()).toString();
+        String monthStart = DateUtil.beginOfMonth(new Date()).toString();
+        String monthEnd = DateUtil.endOfMonth(new Date()).toString();
 
         List<BulletinInfo> bulletins = bulletinInfoService.list(Wrappers.<BulletinInfo>lambdaQuery()
-                .eq(BulletinInfo::getRackUp, 1)
-                .ge(BulletinInfo::getDate, todayStart)
-                .le(BulletinInfo::getDate, todayEnd)
+                .ge(BulletinInfo::getDate, monthStart)
+                .le(BulletinInfo::getDate, monthEnd)
                 .orderByDesc(BulletinInfo::getDate)
                 .last("LIMIT 3"));
 
