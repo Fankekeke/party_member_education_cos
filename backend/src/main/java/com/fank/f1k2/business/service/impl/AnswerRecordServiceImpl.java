@@ -48,14 +48,11 @@ public class AnswerRecordServiceImpl extends ServiceImpl<AnswerRecordMapper, Ans
 
     @Override
     public boolean addAnswerRecord(AnswerRecord answerRecord) throws F1k2Exception {
-        if (CollectionUtil.isEmpty(answerRecord.getCollectionItemList())) {
-            throw new F1k2Exception("请添加题目选项");
-        }
-
-        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, answerRecord.getUserId()));
-        answerRecord.setUserId(userInfo.getId());
+//        if (CollectionUtil.isEmpty(answerRecord.getCollectionItemList())) {
+//            throw new F1k2Exception("请添加题目选项");
+//        }
         answerRecord.setCreateDate(DateUtil.formatDateTime(new Date()));
-        answerRecord.setAnswerDetail(JSONUtil.toJsonStr(answerRecord.getCollectionItemList()));
+//        answerRecord.setAnswerDetail(JSONUtil.toJsonStr(answerRecord.getCollectionItemList()));
         return this.save(answerRecord);
     }
 }

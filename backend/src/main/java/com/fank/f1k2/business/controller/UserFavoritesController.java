@@ -75,6 +75,14 @@ public class UserFavoritesController {
     public R save(UserFavorites addFrom) {
         UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, addFrom.getUserId()));
         addFrom.setUserId(userInfo.getId());
+
+        // 判断是否存在
+        UserFavorites count = bulletinInfoService.getOne(Wrappers.<UserFavorites>lambdaQuery()
+                .eq(UserFavorites::getUserId, addFrom.getUserId()).eq(UserFavorites::getTopicId, addFrom.getTopicId()));
+        if (count != null) {
+            return R.ok(bulletinInfoService.removeById(count.getId()));
+        }
+
         addFrom.setCreatedAt(DateUtil.formatDateTime(new Date()));
         return R.ok(bulletinInfoService.save(addFrom));
     }

@@ -52,6 +52,9 @@
           </div>
         </div>
       </a-col>
+      <a-col :span="16">
+        <ai-chat/>
+      </a-col>
     </a-row>
   </div>
 </template>
@@ -59,8 +62,10 @@
 <script>
 import {mapState} from 'vuex'
 import moment from 'moment'
+import AiChat from "./AiChat.vue";
 export default {
   name: 'Work',
+  components: {AiChat},
   computed: {
     ...mapState({
       currentUser: state => state.account.user

@@ -100,7 +100,7 @@ public class PartyAnswersController {
      * @param addFrom 问题回答表对象
      * @return 结果
      */
-    @PostMapping
+    @PostMapping("/staffSave")
     public R staffSave(PartyAnswers addFrom) {
         StaffInfo staffInfo = staffInfoService.getOne(Wrappers.<StaffInfo>lambdaQuery().eq(StaffInfo::getSysUserId, addFrom.getUserId()));
         addFrom.setUserId(staffInfo.getUserId());

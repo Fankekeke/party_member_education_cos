@@ -24,6 +24,7 @@
         <if test="queryFrom.name != null and queryFrom.name != ''">
             AND name LIKE CONCAT('%',#{queryFrom.name},'%')
         </if>
+        group by qb.id
         ORDER BY
         qb.create_date DESC
     </select>

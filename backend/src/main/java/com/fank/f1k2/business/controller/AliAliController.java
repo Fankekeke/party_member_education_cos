@@ -1,5 +1,14 @@
 package com.fank.f1k2.business.controller;
 
+import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fank.f1k2.business.entity.UserInfo;
+import com.fank.f1k2.business.entity.UserLearningTrace;
+import com.fank.f1k2.business.entity.UserQuestions;
+import com.fank.f1k2.business.service.IUserInfoService;
+import com.fank.f1k2.business.service.IUserLearningStatsService;
+import com.fank.f1k2.business.service.IUserLearningTraceService;
+import com.fank.f1k2.business.service.IUserQuestionsService;
 import com.fank.f1k2.common.utils.R;
 import com.alibaba.dashscope.aigc.generation.Generation;
 import com.alibaba.dashscope.aigc.generation.GenerationOutput;
@@ -19,6 +28,8 @@ import com.google.common.base.Throwables;
 import io.reactivex.Flowable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -37,17 +48,53 @@ public class AliAliController {
     @Resource
     private Generation generation;
 
+    @Resource
+    private IUserInfoService userInfoService;
+
+    @Resource
+    private IUserQuestionsService userQuestionsService;
+
+    @Resource
+    private IUserLearningTraceService userLearningTraceService;
+
+    /**
+     * ai问答
+     *
+     * @param content 用书输入文本内容
+     */
+    @GetMapping(value = "aliTyqw")
+    @Transactional(rollbackFor = Exception.class)
+    public R aliTyqw(String content, Integer userId) throws NoApiKeyException, InputRequiredException {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, userId));
+        UserQuestions  userQuestions = new UserQuestions();
+        userQuestions.setUserId(userInfo.getId());
+        userQuestions.setCreatedAt(DateUtil.formatDateTime(new Date()));
+        userQuestions.setStatus("进行中");
+        userQuestions.setContent("");
+        userQuestions.setKeyWord(content);
+        userQuestionsService.save(userQuestions);
+
+        UserLearningTrace userLearningTrace = new UserLearningTrace();
+        userLearningTrace.setUserId(userInfo.getId());
+        userLearningTrace.setActionType("查询");
+        userLearningTrace.setKeyWord(content);
+        userLearningTrace.setTargetId(userQuestions.getId());
+        userLearningTraceService.save(userLearningTrace);
+        String contentMessage = send(content, userQuestions.getId());
+        return R.ok(contentMessage);
+    }
+
     /**
      * 测试demo
      *
      * @param content 用书输入文本内容
      */
-    @PostMapping(value = "aliTyqw")
-    public R send(@RequestBody String content) throws NoApiKeyException, InputRequiredException {
+    @Async
+    public String send(@RequestBody String content, Integer userQuestionsId) throws NoApiKeyException, InputRequiredException {
         //用户与模型的对话历史。list中的每个元素形式为{“role”:角色, “content”: 内容}。
         Message userMessage = Message.builder()
                 .role(Role.USER.getValue())
-                .content(content)
+                .content(content + "总是给出简介的回答（100-300字）")
                 .build();
 
         GenerationParam param = GenerationParam.builder()
@@ -60,7 +107,7 @@ public class AliAliController {
                 // 取值范围为（0,1.0)，取值越大，生成的随机性越高；取值越低，生成的确定性越高。
                 .topP(0.8)
                 //阿里云控制台DASHSCOPE获取的api-key
-                .apiKey("sk-fkeeb84a761e0941ad8b8bc9519d419dc0")
+                .apiKey("sk-eeb84a761e0941ad8b8bc9519d419dc0")
                 //启用互联网搜索，模型会将搜索结果作为文本生成过程中的参考信息，但模型会基于其内部逻辑“自行判断”是否使用互联网搜索结果。
                 .enableSearch(true)
                 .build();
@@ -72,7 +119,8 @@ public class AliAliController {
                 .collect(Collectors.toList());
 
         String combinedContent = String.join("\n---\n", allContents); // 使用 "---" 分隔多个回复内容
-        return R.ok(combinedContent);
+        userQuestionsService.update(Wrappers.<UserQuestions>lambdaUpdate().set(UserQuestions::getAiAnswer, combinedContent).set(UserQuestions::getStatus, "已回答").eq(UserQuestions::getId, userQuestionsId));
+        return combinedContent;
     }
 
     @PostMapping(value = "recognitionImage")
