@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author FanK fan1ke2ke@gmail.com（悲伤的橘子树）
@@ -26,5 +27,15 @@ public class PartyQuestionsServiceImpl extends ServiceImpl<PartyQuestionsMapper,
     @Override
     public IPage<LinkedHashMap<String, Object>> queryPage(Page<PartyQuestions> page, PartyQuestions queryFrom) {
         return baseMapper.queryPage(page, queryFrom);
+    }
+
+    /**
+     * 查询所有问题
+     *
+     * @return 列表
+     */
+    @Override
+    public List<LinkedHashMap<String, Object>> queryAllQuestions() {
+        return baseMapper.queryAllQuestions();
     }
 }

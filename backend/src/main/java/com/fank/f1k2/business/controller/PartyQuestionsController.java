@@ -45,6 +45,16 @@ public class PartyQuestionsController {
     }
 
     /**
+     * 查询所有问题
+     *
+     * @return 列表
+     */
+    @GetMapping("/queryAllQuestions")
+    public R queryAllQuestions(){
+        return R.ok(bulletinInfoService.queryAllQuestions());
+    }
+
+    /**
      * 查询党员社区问题表详情
      *
      * @param id 主键ID
