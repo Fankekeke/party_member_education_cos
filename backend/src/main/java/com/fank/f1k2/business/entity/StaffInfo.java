@@ -92,7 +92,7 @@ public class StaffInfo implements Serializable {
     /**
      * 用户ID
      */
-    private String userId;
+    private Integer userId;
 
     /**
      * 部门名称
