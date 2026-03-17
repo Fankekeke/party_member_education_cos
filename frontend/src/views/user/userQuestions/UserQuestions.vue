@@ -400,6 +400,7 @@ export default {
       if (params.status === undefined) {
         delete params.status
       }
+      params.userId = this.currentUser.userId
       this.$get('/business/user-questions/page', {
         ...params
       }).then((r) => {

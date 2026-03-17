@@ -322,6 +322,7 @@ export default {
       if (params.voteType === undefined) {
         delete params.voteType
       }
+      params.userId = this.currentUser.userId
       this.$get('/business/content-votes/page', {
         ...params
       }).then((r) => {

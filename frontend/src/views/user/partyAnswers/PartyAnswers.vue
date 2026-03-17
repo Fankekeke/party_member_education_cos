@@ -393,6 +393,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
+      params.userId = this.currentUser.userId
       this.$get('/business/party-answers/page', {
         ...params
       }).then((r) => {

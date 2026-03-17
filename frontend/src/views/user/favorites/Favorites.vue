@@ -343,6 +343,7 @@ export default {
       if (params.questionType === undefined) {
         delete params.questionType
       }
+      params.userId = this.currentUser.userId
       this.$get('/business/user-favorites/page', {
         ...params
       }).then((r) => {

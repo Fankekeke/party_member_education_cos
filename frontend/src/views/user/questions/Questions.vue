@@ -290,7 +290,7 @@ export default {
 
 <style scoped lang="less">.page-container {
   padding: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #f3f3f3 100%);
   min-height: calc(100vh - 64px);
 }
 
@@ -428,7 +428,7 @@ export default {
         height: 44px;
         font-size: 16px;
         border-radius: 8px;
-        background: linear-gradient(135deg, #722ed1 0%, #b37feb 100%);
+        background: linear-gradient(135deg, #41e547 0%, #13b264 100%);
         border: none;
         transition: all 0.3s;
 
