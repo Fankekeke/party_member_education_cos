@@ -192,6 +192,7 @@ export default {
   overflow-y: auto;
   padding: 20px;
   background-color: #fafafa;
+  height: 60vh;
 }
 
 .message {

@@ -70,7 +70,7 @@ public class AliAliController {
         userQuestions.setUserId(userInfo.getId());
         userQuestions.setCreatedAt(DateUtil.formatDateTime(new Date()));
         userQuestions.setStatus("进行中");
-        userQuestions.setContent("");
+        userQuestions.setContent(content);
         userQuestions.setKeyWord(content);
         userQuestionsService.save(userQuestions);
 
@@ -107,7 +107,7 @@ public class AliAliController {
                 // 取值范围为（0,1.0)，取值越大，生成的随机性越高；取值越低，生成的确定性越高。
                 .topP(0.8)
                 //阿里云控制台DASHSCOPE获取的api-key
-                .apiKey("sk-eeb84a761e0941ad8b8bc9519d419dc0")
+                .apiKey("sk-fkeeb84a761e0941ad8b8bc9519d419dc0")
                 //启用互联网搜索，模型会将搜索结果作为文本生成过程中的参考信息，但模型会基于其内部逻辑“自行判断”是否使用互联网搜索结果。
                 .enableSearch(true)
                 .build();
