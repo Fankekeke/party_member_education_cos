@@ -4,14 +4,10 @@ package com.fank.f1k2.business.controller;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.fank.f1k2.business.entity.PartyAnswers;
-import com.fank.f1k2.business.entity.UserInfo;
-import com.fank.f1k2.business.service.IPartyAnswersService;
-import com.fank.f1k2.business.service.IUserInfoService;
+import com.fank.f1k2.business.entity.*;
+import com.fank.f1k2.business.service.*;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fank.f1k2.business.entity.ContentVotes;
-import com.fank.f1k2.business.service.IContentVotesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +34,10 @@ public class ContentVotesController {
     private final IPartyAnswersService partyAnswersService;
 
     private final IUserInfoService userInfoService;
+
+    private final INotifyInfoService notifyInfoService;
+
+    private final IPartyQuestionsService partyQuestionsService;
 
     /**
      * 分页获取顶踩投票记录表
@@ -86,6 +86,7 @@ public class ContentVotesController {
         if (CollectionUtil.isEmpty(partyAnswers)) {
             return R.ok(Collections.emptyList());
         }
+
         List<Integer> answerIds = partyAnswers.stream().map(PartyAnswers::getId).collect(Collectors.toList());
         return R.ok(bulletinInfoService.list(Wrappers.<ContentVotes>lambdaQuery().eq(ContentVotes::getUserId, userInfo.getId()).in(ContentVotes::getAnswerId, answerIds)));
     }
@@ -101,6 +102,16 @@ public class ContentVotesController {
         UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, addFrom.getUserId()));
         addFrom.setUserId(userInfo.getId());
         addFrom.setCreatedAt(DateUtil.formatDateTime(new Date()));
+
+        bulletinInfoService.remove(Wrappers.<ContentVotes>lambdaQuery().eq(ContentVotes::getUserId, addFrom.getUserId()).eq(ContentVotes::getAnswerId, addFrom.getAnswerId()));
+
+        PartyAnswers partyAnswers = partyAnswersService.getById(addFrom.getAnswerId());
+        UserInfo notifyUserInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getId, partyAnswers.getUserId()));
+
+        String message1 = "用户" + userInfo.getName() + "对您的回答进行了" + (addFrom.getVoteType() == 1 ? "顶" : "踩") + "操作";
+        NotifyInfo messageInfo = new NotifyInfo(Math.toIntExact(notifyUserInfo.getId()), notifyUserInfo.getCode(), message1, DateUtil.formatDateTime(new Date()));
+        notifyInfoService.save(messageInfo);
+
         return R.ok(bulletinInfoService.save(addFrom));
     }
 

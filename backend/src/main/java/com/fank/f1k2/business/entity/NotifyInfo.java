@@ -54,8 +54,9 @@ public class NotifyInfo implements Serializable {
     @TableField(exist = false)
     private String userName;
 
-    public NotifyInfo(Integer userId, String content, String createDate) {
+    public NotifyInfo(Integer userId, String userCode, String content, String createDate) {
         this.userId = userId;
+        this.userCode = userCode;
         this.content = content;
         this.createDate = createDate;
     }

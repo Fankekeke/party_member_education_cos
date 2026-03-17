@@ -1,6 +1,7 @@
 package com.fank.f1k2.business.controller;
 
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.fank.f1k2.common.utils.R;
 import com.fank.f1k2.business.entity.*;
 import com.fank.f1k2.business.service.*;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author FanK
@@ -79,8 +81,7 @@ public class ReplyInfoController {
         String check = this.contentCheck(replyInfo.getContent());
         if (StrUtil.isNotEmpty(check)) {
             return R.error(500, check);
-        }
-        {
+        } else {
             // 获取贴子信息
             PostInfo postInfo = postInfoService.getById(replyInfo.getPostId());
             // 获取回复人信息
@@ -89,12 +90,17 @@ public class ReplyInfoController {
             List<NotifyInfo> messageInfoList = new ArrayList<>();
             List<CollectInfo> collectInfoList = collectInfoService.list(Wrappers.<CollectInfo>lambdaQuery().eq(CollectInfo::getPostId, replyInfo.getPostId()).eq(CollectInfo::getDeleteFlag, 0));
             String message = "您收藏的贴子《" + postInfo.getTitle() + "》，" + username + "进行了回复，快去看看吧";
-            for (CollectInfo collectInfo : collectInfoList) {
-                messageInfoList.add(new NotifyInfo(Math.toIntExact(collectInfo.getUserId()), message, DateUtil.formatDateTime(new Date())));
+            if (CollectionUtil.isNotEmpty(collectInfoList)) {
+                List<String> userCodeList = collectInfoList.stream().map(CollectInfo::getUserId).map(String::valueOf).collect(Collectors.toList());
+                List<UserInfo> userInfoList = userInfoService.list(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getCode, userCodeList));
+                for (UserInfo userInfo : userInfoList) {
+                    messageInfoList.add(new NotifyInfo(Math.toIntExact(userInfo.getId()), userInfo.getCode(), message, DateUtil.formatDateTime(new Date())));
+                }
             }
 
             String message1 = "您的贴子《" + postInfo.getTitle() + "》，" + username + "进行了回复，快去看看吧";
-            NotifyInfo messageInfo = new NotifyInfo(Math.toIntExact(postInfo.getUserId()), message1, DateUtil.formatDateTime(new Date()));
+            UserInfo userInfo = userInfoService.getById(postInfo.getUserId());
+            NotifyInfo messageInfo = new NotifyInfo(Math.toIntExact(userInfo.getId()), userInfo.getCode(), message1, DateUtil.formatDateTime(new Date()));
 
             messageInfoList.add(messageInfo);
             notifyInfoService.saveBatch(messageInfoList);

@@ -1,6 +1,7 @@
 package com.fank.f1k2.business.controller;
 
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.fank.f1k2.common.service.CacheService;
 import com.fank.f1k2.common.utils.R;
 import com.fank.f1k2.business.entity.*;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author FanK
@@ -201,12 +203,16 @@ public class PostInfoController {
             String username = user != null ? user.getName() : "用户";
             // 消息通知
             List<FocusInfo> focusInfoList = focusInfoService.list(Wrappers.<FocusInfo>lambdaQuery().eq(FocusInfo::getCollectUserId, postInfo.getUserId()).eq(FocusInfo::getDeleteFlag, 0));
-            List<NotifyInfo> messageInfoList = new ArrayList<>();
-            String message = "您关注的" + username + "发布了新贴子 《" + postInfo.getTitle() + "》，快去回复吧";
-            for (FocusInfo focusInfo : focusInfoList) {
-                messageInfoList.add(new NotifyInfo(Math.toIntExact(focusInfo.getUserId()), message, DateUtil.formatDateTime(new Date())));
+            if (CollectionUtil.isNotEmpty(focusInfoList)) {
+                List<String> userCodeList = focusInfoList.stream().map(FocusInfo::getUserId).map(String::valueOf).collect(Collectors.toList());
+                List<UserInfo> userInfoList = userInfoService.list(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getCode, userCodeList));
+                List<NotifyInfo> messageInfoList = new ArrayList<>();
+                String message = "您关注的" + username + "发布了新贴子 《" + postInfo.getTitle() + "》，快去回复吧";
+                for (UserInfo userInfo : userInfoList) {
+                    messageInfoList.add(new NotifyInfo(Math.toIntExact(userInfo.getId()), userInfo.getCode(), message, DateUtil.formatDateTime(new Date())));
+                }
+                notifyInfoService.saveBatch(messageInfoList);
             }
-            notifyInfoService.saveBatch(messageInfoList);
             postInfo.setCreateDate(DateUtil.formatDateTime(new Date()));
             postInfo.setDeleteFlag(0);
             postInfo.setPageviews(0);

@@ -3,14 +3,10 @@ package com.fank.f1k2.business.controller;
 
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.fank.f1k2.business.entity.StaffInfo;
-import com.fank.f1k2.business.entity.UserInfo;
-import com.fank.f1k2.business.service.IStaffInfoService;
-import com.fank.f1k2.business.service.IUserInfoService;
+import com.fank.f1k2.business.entity.*;
+import com.fank.f1k2.business.service.*;
 import com.fank.f1k2.common.utils.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fank.f1k2.business.entity.PartyAnswers;
-import com.fank.f1k2.business.service.IPartyAnswersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +31,10 @@ public class PartyAnswersController {
     private final IUserInfoService userInfoService;
 
     private final IStaffInfoService staffInfoService;
+
+    private final INotifyInfoService notifyInfoService;
+
+    private final IPartyQuestionsService partyQuestionsService;
 
     /**
      * 分页获取问题回答表
@@ -91,6 +91,14 @@ public class PartyAnswersController {
         UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, addFrom.getUserId()));
         addFrom.setUserId(userInfo.getId());
         addFrom.setCreatedAt(DateUtil.formatDateTime(new Date()));
+
+        String message1 = "用户" + userInfo.getName() + "在" + DateUtil.formatDateTime(new Date()) + "提交了问题回答，请及时查看！";
+        PartyQuestions questionInfo = partyQuestionsService.getById(addFrom.getQuestionId());
+        UserInfo notifyUserInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getId, questionInfo.getUserId()));
+
+        NotifyInfo messageInfo = new NotifyInfo(Math.toIntExact(notifyUserInfo.getId()), notifyUserInfo.getCode(), message1, DateUtil.formatDateTime(new Date()));
+        notifyInfoService.save(messageInfo);
+
         return R.ok(bulletinInfoService.save(addFrom));
     }
 
