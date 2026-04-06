@@ -169,12 +169,6 @@ export default {
         scopedSlots: { customRender: 'userImages' },
         width: 100
       }, {
-        title: '消息状态',
-        dataIndex: 'delFlag',
-        ellipsis: true,
-        scopedSlots: { customRender: 'delFlag' },
-        width: 100
-      }, {
         title: '消息内容',
         dataIndex: 'content',
         ellipsis: true,

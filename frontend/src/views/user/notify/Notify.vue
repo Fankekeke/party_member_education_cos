@@ -169,12 +169,6 @@ export default {
         scopedSlots: { customRender: 'userImages' },
         width: 100
       }, {
-        title: '消息状态',
-        dataIndex: 'delFlag',
-        ellipsis: true,
-        scopedSlots: { customRender: 'delFlag' },
-        width: 100
-      }, {
         title: '消息内容',
         dataIndex: 'content',
         ellipsis: true,
@@ -294,7 +288,8 @@ export default {
       if (params.readStatus === undefined) {
         delete params.readStatus
       }
-      this.$get('/business/notify-info/page', {
+      params.userId = this.currentUser.userId
+      this.$get('/business/notify-info/queryNotifyByUser', {
         ...params
       }).then((r) => {
         let data = r.data.data
